@@ -1,0 +1,77 @@
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100dvh;
+}
+
+.ChessBorder {
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to bottom right, lightgreen, lightblue);
+    
+    display: flex;
+    justify-content: center;
+    
+    padding-top: 3%;
+}
+
+.White {
+    background-color: #fff8dc;
+}
+
+.Black {
+    background-color: #954535;
+}
+
+.WhiteNumber {
+    color: #fff8dc;
+}
+
+.BlackNumber {
+    color: #954535;
+}
+
+.ChessBoard {
+    height: 70vmin;
+    width: 70vmin;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 15px;
+    border-color: #4d2d1a;
+}
+
+.ChessRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+}
+
+.ChessSquare {
+    width: 12.5%;
+    height: 100%;
+}
+
+.ChessSquare:hover {
+    cursor: pointer;
+    box-shadow: 0px 0px 10px 5px aquamarine;
+    
+    z-index: 1;
+}
+
+.ChessSquareLetter {
+    position: absolute;
+    
+    bottom: 21.5%;
+}
+
+.ChessSquareLetter,
+.ChessSquareNumber {
+    font-size: large;
+}
