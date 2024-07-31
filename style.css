@@ -54,6 +54,7 @@ body {
 }
 
 .ChessSquare {
+    position: relative;
     width: 12.5%;
     height: 100%;
 }
@@ -68,7 +69,16 @@ body {
 .ChessSquareLetter {
     position: absolute;
     
-    bottom: 21.5%;
+    bottom: 3%;
+    left:80%;
+}
+
+
+.ChessSquareNumber {
+    position: absolute;
+    
+    bottom: 70%;
+    left:0%;
 }
 
 .ChessSquareLetter,
