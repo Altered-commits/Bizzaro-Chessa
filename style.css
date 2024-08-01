@@ -96,3 +96,24 @@ body {
     max-width: 100%;
     width: 100%;
 }
+
+.ChessActions {
+    margin-top: -150px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.ChessActions button
+{
+    display: warp;
+    position: relative;
+    margin: 50px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    background-color: hsl(21, 79%, 33%);
+    color: rgb(255, 255, 255);
+}
