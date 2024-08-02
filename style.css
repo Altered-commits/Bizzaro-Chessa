@@ -6,6 +6,37 @@ body {
     overflow: hidden;
 }
 
+.HomeScreen {
+    width: 100%;
+    height: 100vh; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(104, 79, 159);
+}
+
+.PageActions {
+    margin: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+    flex-wrap: wrap;
+}
+
+.PageActions button {
+    display: inline-block; 
+    position: relative;
+    margin: 10px; 
+    padding: 10px 20px; 
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    background-color: hsl(125, 85%, 52%);
+    color: rgb(16, 12, 12); 
+}
+
 .ChessBorder {
     width: 100%;
     height: 100%;
