@@ -3,6 +3,11 @@ body {
     padding: 0;
     width: 100%;
     height: 100dvh;
+    background-image: url('WallPaper/bizzchess.jpg');
+    background-color: rgb(164, 17, 177);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
     overflow: hidden;
 }
 
@@ -10,19 +15,21 @@ body {
     width: 100%;
     height: 100vh; 
     display: flex;
+    position: relative;
     justify-content: center;
     align-items: center;
-    background-color: rgb(104, 79, 159);
 }
 
 .PageActions {
     margin: 0;
+    position: absolute; 
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center; 
     flex-wrap: wrap;
+    z-index: 1;
 }
 
 .PageActions button {
@@ -32,7 +39,36 @@ body {
     padding: 10px 20px; 
     font-size: 16px;
     cursor: pointer;
-    border: none;
-    background-color: hsl(125, 85%, 52%);
-    color: rgb(16, 12, 12); 
+    border: 2px  solid #DC1FFF;
+    background-color: white;
+    color: linear-gradient(to left, #00FFA3, #DC1FFF);;
+    border-radius: 8px;
+    transition: background-color 200ms, color 200ms;
+}
+
+.PageActions button::before {
+    content: "";
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    border-radius: 6px;
+    background-color: white;
+    z-index: -1;
+    transition: 200ms;
+}
+
+.PageActions button:hover {
+    background: linear-gradient(to left, #00FFA3, #DC1FFF);
+    background-clip: text;
+    color: transparent;
+}
+
+.PageActions button:hover::before {
+    opacity: 50%;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
 }
