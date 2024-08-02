@@ -10,10 +10,8 @@ body {
     width: 100%;
     height: 100%;
     background-image: linear-gradient(to bottom right, lightgreen, lightblue);
-    
     display: flex;
     justify-content: center;
-    
     padding-top: 3%;
 }
 
@@ -36,10 +34,8 @@ body {
 .ChessBoard {
     height: 70vmin;
     width: 70vmin;
-
     display: flex;
     flex-wrap: wrap;
-
     border-style: solid;
     border-radius: 5px;
     border-width: 15px;
@@ -50,7 +46,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 100%;
 }
 
@@ -64,13 +59,11 @@ body {
 .ChessSquare:hover {
     cursor: pointer;
     box-shadow: 0px 0px 10px 5px aquamarine;
-    
     z-index: 1;
 }
 
 .ChessSquareLetter {
     position: absolute;
-    
     bottom: 0px;
     left: 80%;
 }
@@ -88,7 +81,6 @@ body {
 .ChessPiece {
     width: 90%;
     z-index: 1;
-    
     cursor: pointer;
     position: absolute;
 }
@@ -106,15 +98,43 @@ body {
     flex-wrap: wrap;
 }
 
-.ChessActions button
-{
-    display: warp;
+.ChessActions button {
     position: relative;
     margin: 50px;
-    padding: 10px;
+    padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
-    border: none;
-    background-color: hsl(21, 79%, 33%);
-    color: rgb(255, 255, 255);
+    border: 2px  solid #DC1FFF;
+    
+    background-color: white;
+    color: linear-gradient(to left, #00FFA3, #DC1FFF);;
+    border-radius: 8px;
+    transition: background-color 200ms, color 200ms;
+}
+
+.ChessActions button::before {
+    content: "";
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    border-radius: 6px;
+    background-color: white;
+    z-index: -1;
+    transition: 200ms;
+}
+
+.ChessActions button:hover {
+    background: linear-gradient(to left, #00FFA3, #DC1FFF);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.ChessActions button:hover::before {
+    opacity: 50%;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
 }

@@ -47,3 +47,12 @@ function setup() {
 window.addEventListener('DOMContentLoaded', (e) => {
     setup();
 });
+
+function restartGame(){
+    location.reload();
+}
+
+function quitGame(){
+    if(confirm("do you wanna quit fr ong?"))
+    window.close();
+}
