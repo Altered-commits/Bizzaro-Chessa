@@ -53,7 +53,7 @@ body {
 
 .PageActions button:hover {
     background: linear-gradient(to left, #00FFA3, #DC1FFF);
-    -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
 }
 
@@ -186,7 +186,7 @@ body {
 
 .ChessActions button:hover {
     background: linear-gradient(to left, #00FFA3, #DC1FFF);
-    -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
 }
 
