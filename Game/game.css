@@ -105,7 +105,7 @@ body {
     font-size: 16px;
     cursor: pointer;
     border: 2px  solid #DC1FFF;
-    
+    border-radius: 50px;
     background-color: white;
     color: linear-gradient(to left, #00FFA3, #DC1FFF);;
     border-radius: 8px;
@@ -127,7 +127,7 @@ body {
 
 .ChessActions button:hover {
     background: linear-gradient(to left, #00FFA3, #DC1FFF);
-    -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
 }
 
