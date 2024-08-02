@@ -12,7 +12,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(104, 79, 159);
+    background-image: linear-gradient(to bottom right, lightgreen, lightblue);
 }
 
 .PageActions {
@@ -32,9 +32,37 @@ body {
     padding: 10px 20px; 
     font-size: 16px;
     cursor: pointer;
-    border: none;
-    background-color: hsl(125, 85%, 52%);
-    color: rgb(16, 12, 12); 
+    border: 2px  solid #DC1FFF;
+    border-radius: 50px;
+    background-color: #fff8dc;
+    color: #954535; 
+}
+
+.PageActions button::before {
+    content: "";
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    border-radius: 6px;
+    background-color: white;
+    z-index: -1;
+    transition: 200ms;
+}
+
+.PageActions button:hover {
+    background: linear-gradient(to left, #00FFA3, #DC1FFF);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.PageActions button:hover::before {
+    opacity: 50%;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
 }
 
 .ChessBorder {
@@ -136,7 +164,7 @@ body {
     font-size: 16px;
     cursor: pointer;
     border: 2px  solid #DC1FFF;
-    
+    border-radius: 50px;
     background-color: white;
     color: linear-gradient(to left, #00FFA3, #DC1FFF);;
     border-radius: 8px;
