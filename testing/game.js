@@ -17,6 +17,27 @@ function pieceCaptureOrMove(square, piece) {
     }
 }
 
+function startGame(){
+    const height=8;
+    const width=8;
+    document.getElementById("border").innerHTML +=`<div class="ChessBoard" id="board"> </div>`;
+    for ( i =0 ;i<height;i++){
+        document.getElementById("board").innerHTML +=`<div class="ChessRow" id="${i}">`;
+        for ( j =0 ;j<width;j++){
+            if ((i+j)%2==0){ 
+                document.getElementById(`${i}`).innerHTML +=`<div class="ChessSquare White" id=${(i*height+j)}"> </div>`;
+                console.log(`${(i*height+j)}`)
+            }
+            if ((i+j)%2!=0)  { document.getElementById(`${i}`).innerHTML +=`<div class="ChessSquare Black" id=${(i*height+j)}"> </div>`;}
+
+        }
+        document.getElementById("board").innerHTML +='</div>';
+    }
+    document.getElementById("buttons").innerHTML  +=`<button id ="restartButton" onclick="restartGame()">RESTART</button>`;
+    document.getElementById("buttons").innerHTML  +=`<button id ="undoButton" onclick="undoMove()">UNDO</button>`;
+    document.getElementById("buttons").innerHTML  +=`<button id ="quitButton" onclick="quitGame()">QUIT</button>`;
+    document.getElementById("startButton").outerHTML  =``;
+}
 //Add event listeners for drag-and-drop
 function setup() {
     chessPieces.forEach((piece) => {
