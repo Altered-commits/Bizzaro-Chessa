@@ -56,3 +56,10 @@ function quitGame(){
     if(confirm("do you wanna quit fr ong?"))
     window.close();
 }
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'r' || event.key === 'R') {
+        event.preventDefault(); // Optional: prevent the default action if needed
+        location.reload(); // Reload the page
+    }
+});
