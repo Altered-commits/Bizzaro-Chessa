@@ -1,27 +1,18 @@
 body {
     margin: 0;
     padding: 0;
+
     width: 100%;
     height: 100dvh;
+
     background-image: url('../WallPaper/bizzchess.jpg');
     background-color: rgb(164, 17, 177);
+    background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    overflow: hidden;
-}
 
-.ChessBorder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    position: relative;
-    padding-top: 3%;
-    align-items: center; 
-    position: relative;
-    box-sizing: border-box;
-    transform: translateY(-14%);
+    overflow: hidden;
 }
 
 .White {
@@ -40,29 +31,37 @@ body {
     color: #954535;
 }
 
-.ChessBoard {
-    height: 70vmin;
-    width: 70vmin;
+.ChessContainer {
+    width: 100%;
+    height: 100%;
+ 
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ChessBoard {
+    width: 70vmin;
+    height: 70vmin;
+
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+
+    max-width: 500px;
+    max-height: 500px;
+
     border-style: solid;
     border-radius: 5px;
     border-width: 15px;
     border-color: #4d2d1a;
-}
 
-.ChessRow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+    margin-top: 2%;
 }
 
 .ChessSquare {
     position: relative;
-    width: 12.5%;
-    height: 100%;
-    max-height: 100%;
 }
 
 .ChessSquare:hover {
@@ -88,7 +87,8 @@ body {
 }
 
 .ChessPiece {
-    width: 90%;
+    width: 100%;
+    height: 100%;
     z-index: 1;
     cursor: pointer;
     position: absolute;
@@ -100,7 +100,6 @@ body {
 }
 
 .ChessActions {
-    margin-top: -150px;
     text-align: center;
     display: flex;
     justify-content: center;
@@ -116,6 +115,7 @@ body {
     border: 2px  solid #DC1FFF;
     border-radius: 50px;
     background-color: white;
+    background-clip: text;
     color: linear-gradient(to left, #00FFA3, #DC1FFF);;
     border-radius: 8px;
     transition: background-color 200ms, color 200ms;
