@@ -13,6 +13,15 @@ const CHESS_PIECE_ARRANGEMENT = [
     ["WP1", "WP2", "WP3", "WP4", "WP5", "WP6", "WP7", "WP8"],
     ["WR1", "WN1", "WB1", "WQ1", "WK1", "WB2", "WN2", "WR2"]
 ];
+const PIECE_CONFIG = {
+    "BR1": new Rook("BR1"), "BN1": new Knight("BN1"), "BB1": new Bishop("BB1"), "BQ1": new Queen("BQ1"), "BK1": new King("BK1"), "BB2": new Bishop("BB2"), "BN2": new Knight("BN2"), "BR2": new Rook("BR2"),
+    "BP1": new Pawn("BP1"), "BP2": new Pawn("BP2"), "BP3": new Pawn("BP3"), "BP4": new Pawn("BP4"), "BP5": new Pawn("BP5"), "BP6": new Pawn("BP6"), "BP7": new Pawn("BP7"), "BP8": new Pawn("BP8"),
+    "WR1": new Rook("WR1"), "WN1": new Knight("WN1"), "WB1": new Bishop("WB1"), "WQ1": new Queen("WQ1"), "WK1": new King("WK1"), "WB2": new Bishop("WB2"), "WN2": new Knight("WN2"), "WR2": new Rook("WR2"),
+    "WP1": new Pawn("WP1"), "WP2": new Pawn("WP2"), "WP3": new Pawn("WP3"), "WP4": new Pawn("WP4"), "WP5": new Pawn("WP5"), "WP6": new Pawn("WP6"), "WP7": new Pawn("WP7"), "WP8": new Pawn("WP8")
+};
+
+//Stores the starting square for each piece which moves
+let chessStartingSquare = null;
 
 //----------Functions----------
 function setupChessBoard()
@@ -30,11 +39,10 @@ function setupChessBoard()
             square.id = nid;
             
             //Square colors decided here
-            if ((row + col) % 2 === 0) {
+            if ((row + col) % 2 === 0)
                 square.classList.add("White");
-            } else {
+            else
                 square.classList.add("Black");
-            }
             
             //Adding ranks
             if(nid % 8 === 0) {
@@ -67,31 +75,28 @@ function setupChessBoard()
             //Add pieces to square if they exist
             const piece = CHESS_PIECE_ARRANGEMENT[row][col]
 
-            if(piece) {
-                const pieceDiv = document.createElement("div");
+            if(piece)
+                square.appendChild(PIECE_CONFIG[piece].render());
 
-                pieceDiv.classList.add("ChessPiece");
-                pieceDiv.id        = piece;
-                pieceDiv.innerHTML = `<img src='ChessPiecesPng/${piece.slice(0, -1)}.png'>`;
-
-                square.appendChild(pieceDiv);
-            }
-
+            //Finally append the completed square
             chessBoard.append(square);
         }
     }
 }
 
-function pieceCaptureOrMove(square, piece) {
-    const existingPiece = square.querySelector(".ChessPiece");
+function pieceCaptureOrMove(startSquare, endSquare, piece) {
+    const existingPiece = endSquare.querySelector(".ChessPiece");
 
-    if(existingPiece) {
-        if (existingPiece.id[0] !== piece.id[0]) {
-            square.replaceChild(piece, existingPiece);
+    if(PIECE_CONFIG[piece.id].validateMovement(startSquare.id, endSquare.id, piece.id[0]))
+    {
+        if(existingPiece) {
+            if (existingPiece.id[0] !== piece.id[0]) {
+                endSquare.replaceChild(piece, existingPiece);
+            }
         }
-    }
-    else {
-        square.appendChild(piece);
+        else {
+            endSquare.appendChild(piece);
+        }
     }
 }
 
@@ -104,7 +109,8 @@ function setupDragDropEvents() {
         piece.setAttribute('draggable', true);
         
         piece.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text', piece.id); //Store the piece ID
+            e.dataTransfer.setData('pieceId', piece.id); //Store the piece ID
+            chessStartingSquare = piece.parentElement;
         });
     });
 
@@ -116,11 +122,11 @@ function setupDragDropEvents() {
         square.addEventListener('drop', (e) => {
             e.preventDefault();
             //Get the piece ID from the data transfer
-            const pieceId = e.dataTransfer.getData('text');
-            const piece = document.getElementById(pieceId);
-            
+            const pieceId     = e.dataTransfer.getData('pieceId');
+            const piece       = document.getElementById(pieceId);
+
             //Append the piece to the new square
-            pieceCaptureOrMove(square, piece);
+            pieceCaptureOrMove(chessStartingSquare, square, piece);
         });
     });
 }
