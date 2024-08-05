@@ -332,14 +332,13 @@ function locationCheck(pieceId,targetblock) {
             if (!piece.wasMoved){
                 
                 if (targetLocation == pieceloc + 8 || targetLocation == pieceloc + 16)
-                    {   piece.wasMoved=true;
-                        console.log("he");
+                    { 
+                        piece.wasMoved=true;
                         piece.location=targetLocation;
                         return true;
                     };
             }//moves 8 blocks forward
             else{
-                console.log("be")
                 if (targetLocation == pieceloc + 8)
                     {
                         piece.location=targetLocation;
