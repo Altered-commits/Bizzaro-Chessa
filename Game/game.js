@@ -1,5 +1,6 @@
 //All of 'query selectors' or 'get elements'
-const chessBoard = document.querySelector('.ChessBoard')
+const chessBoard = document.querySelector('.ChessBoard');
+const chessTurn  = document.querySelector('.ChessTurn');
 
 //Chess constants
 const CHESS_WIDTH = 8;
@@ -21,11 +22,22 @@ const PIECE_CONFIG = {
 };
 
 //Stores the starting square for each piece which moves
-let chessStartingSquare = null;
+let pieceStartingSquare = null;
+let pieceCurrentTurn = 'W';
+let checkingPiece = null;
 
-//----------Functions----------
-function setupChessBoard()
-{
+//----------Helper Functions----------
+function removeHighlights() {
+    document.querySelector(".ChessSquareHighlightS")?.classList.remove("ChessSquareHighlightS");
+    document.querySelector(".ChessSquareHighlightE")?.classList.remove("ChessSquareHighlightE");
+}
+
+function highlightSquares(startSquare, endSquare) {
+    startSquare.classList.add('ChessSquareHighlightS');
+    endSquare.classList.add('ChessSquareHighlightE');
+}
+
+function setupChessBoard() {
     let invertColor = 1;
 
     for (let row = 0; row < CHESS_WIDTH; row++) {
@@ -84,19 +96,92 @@ function setupChessBoard()
     }
 }
 
-function pieceCaptureOrMove(startSquare, endSquare, piece) {
-    const existingPiece = endSquare.querySelector(".ChessPiece");
+//----------All functions regarding chess rules----------
+function switchTurns() {
+    if(pieceCurrentTurn === 'W') {
+        pieceCurrentTurn = 'B';
+        chessTurn.innerHTML = `Black's Turn`
+    }
+    else {
+        pieceCurrentTurn = 'W';
+        chessTurn.innerHTML = `White's Turn`
+    }
+}
 
-    if(PIECE_CONFIG[piece.id].validateMovement(startSquare.id, endSquare.id, piece.id[0]))
+//----------All functions to check if king in check or checkmate----------
+function isSquareUnderAttack(endSquareId, opponentColor) {
+    const attackingPieces = document.querySelectorAll(`.ChessPiece[id^=${opponentColor}]`);
+    
+    for (const piece of attackingPieces) {
+        const pieceId = piece.id;
+        const pieceType = PIECE_CONFIG[pieceId];
+
+        if (pieceType.canAttackSquare(piece.parentElement.id, endSquareId, opponentColor)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function isKingInCheck(kingColor, opponentColor) {
+    const king         = document.querySelector(`.ChessPiece[id=${opponentColor}K1]`);
+    const kingSquareId = king.parentElement.id;
+
+    return isSquareUnderAttack(kingSquareId, kingColor);
+}
+
+function isLegalMove(startSquare, endSquare, piece, opponentColor) {
+    const pieceColor = piece.id[0];
+    
+    //Simulate the move
+    const originalEndSquarePiece = endSquare.querySelector('.ChessPiece');
+    originalEndSquarePiece ? endSquare.replaceChild(piece, originalEndSquarePiece) : endSquare.appendChild(piece);
+
+    //Check if the king would be in check after the move
+    const isKingInCheckAfterMove = isKingInCheck(opponentColor, pieceColor);
+
+    //Revert the move
+    startSquare.appendChild(piece);
+    if (originalEndSquarePiece)
+        endSquare.appendChild(originalEndSquarePiece);
+
+    //If the king is in check, disallow the move
+    return !isKingInCheckAfterMove;
+}
+
+function pieceCaptureOrMove(startSquare, endSquare, piece) {
+    const pieceColor = piece.id[0];
+    const pieceType  = piece.id[1];
+    //Check if the piece is of correct color (according to piece turn)
+    if(pieceCurrentTurn !== pieceColor)
+        return;
+
+    const existingPiece = endSquare.querySelector(".ChessPiece");
+    const opponentColor = pieceColor === 'W' ? 'B' : 'W';
+
+    if(PIECE_CONFIG[piece.id].validateMovement(startSquare.id, endSquare.id, pieceColor))
     {
+        if(!isLegalMove(startSquare, endSquare, piece, opponentColor))
+            return;
+        // if(pieceType === 'K') {
+        //     if(isSquareUnderAttack(endSquare.id, opponentColor)) {
+        //         return;
+        //     }
+        // }
         if(existingPiece) {
-            if (existingPiece.id[0] !== piece.id[0]) {
+            if (existingPiece.id[0] !== pieceColor) {
                 endSquare.replaceChild(piece, existingPiece);
+                switchTurns();
             }
         }
         else {
             endSquare.appendChild(piece);
+            switchTurns();
         }
+        
+        removeHighlights();
+        highlightSquares(startSquare, endSquare);
     }
 }
 
@@ -110,23 +195,23 @@ function setupDragDropEvents() {
         
         piece.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('pieceId', piece.id); //Store the piece ID
-            chessStartingSquare = piece.parentElement;
+            pieceStartingSquare = piece.parentElement;
         });
     });
 
-    chessSquares.forEach((square) => {
-        square.addEventListener('dragover', (e) => {
+    chessSquares.forEach((pieceEndingSquare) => {
+        pieceEndingSquare.addEventListener('dragover', (e) => {
             e.preventDefault();
         });
 
-        square.addEventListener('drop', (e) => {
-            e.preventDefault();
+        pieceEndingSquare.addEventListener('drop', (e) => {
+            e.stopPropagation();
             //Get the piece ID from the data transfer
-            const pieceId     = e.dataTransfer.getData('pieceId');
-            const piece       = document.getElementById(pieceId);
+            const pieceId = e.dataTransfer.getData('pieceId');
+            const piece   = document.getElementById(pieceId);
 
-            //Append the piece to the new square
-            pieceCaptureOrMove(chessStartingSquare, square, piece);
+            //Append the piece to the new pieceEndingSquare if valid
+            pieceCaptureOrMove(pieceStartingSquare, pieceEndingSquare, piece);
         });
     });
 }

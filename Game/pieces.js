@@ -16,6 +16,10 @@ class ChessPiece {
     validateMovement(startingSquare, endingSquare, pieceColor) {
         return false;
     }
+
+    canAttackSquare(startingSquare, endingSquare, pieceColor) {
+        return false;
+    }
 }
 
 class Pawn extends ChessPiece
@@ -29,12 +33,12 @@ class Pawn extends ChessPiece
         const startId = +startingSquare;
         const endId   = +endingSquare;
 
-        const movementSquareId = (pieceColor === 'W' ? 1 : -1);
+        const direction = (pieceColor === 'W' ? 1 : -1);
 
-        const forwardOne    = startId - 8 * movementSquareId;
-        const forwardTwo    = startId - 16 * movementSquareId;
-        const diagonalLeft  = startId - 9 * movementSquareId;
-        const diagonalRight = startId - 7 * movementSquareId;
+        const forwardOne    = startId - 8 * direction;
+        const forwardTwo    = startId - 16 * direction;
+        const diagonalLeft  = startId - 9 * direction;
+        const diagonalRight = startId - 7 * direction;
 
         if(this.startingPawnMovement) {
             let hindrancePieces = false;
@@ -54,7 +58,20 @@ class Pawn extends ChessPiece
             return !document.getElementById(forwardOne).querySelector(".ChessPiece");
         
         return ((endId == diagonalLeft) && document.getElementById(endId).querySelector(".ChessPiece")) 
-            || ((endId == diagonalRight) && document.getElementById(endId).querySelector(".ChessPiece"));//moving left and theres a piece there then moveable
+            || ((endId == diagonalRight) && document.getElementById(endId).querySelector(".ChessPiece"));
+    }
+
+    canAttackSquare(startingSquare, endingSquare, pieceColor) {
+        //Logic for pawns attacking diagonally specially implemented
+        const startId = +startingSquare;
+        const endId   = +endingSquare;
+        const direction = (pieceColor === 'W' ? 1 : -1);
+        const possibleAttacks = [
+            startId - 9 * direction,
+            startId - 7 * direction
+        ];
+
+        return possibleAttacks.includes(endId);
     }
 }
 
@@ -89,6 +106,10 @@ class Rook extends ChessPiece
         }
 
         return true;
+    }
+
+    canAttackSquare(startingSquare, endingSquare, pieceColor) {
+        return this.validateMovement(startingSquare, endingSquare, pieceColor);
     }
 }
 
@@ -127,6 +148,10 @@ class Bishop extends ChessPiece
 
         return true;
     }
+
+    canAttackSquare(startingSquare, endingSquare, pieceColor) {
+        return this.validateMovement(startingSquare, endingSquare, pieceColor);
+    }
 }
 
 class Knight extends ChessPiece
@@ -140,6 +165,10 @@ class Knight extends ChessPiece
         //Valid knight moves grouped into one big bit list
         const validSteps = 0b101000010001000000;
         return (validSteps >> Math.min(31, Math.abs(step))) & 1;
+    }
+
+    canAttackSquare(startingSquare, endingSquare, pieceColor) {
+        return this.validateMovement(startingSquare, endingSquare, pieceColor);
     }
 }
 
@@ -174,7 +203,6 @@ class Queen extends ChessPiece
 
             while (currentRow !== endRow && currentCol !== endCol) {
                 const currentSquareId = currentRow * 8 + currentCol;
-                console.log(currentSquareId);
 
                 if (document.getElementById(currentSquareId).querySelector(".ChessPiece"))
                     return false;
@@ -201,6 +229,10 @@ class Queen extends ChessPiece
             return true;
         }
     }
+
+    canAttackSquare(startingSquare, endingSquare, pieceColor) {
+        return this.validateMovement(startingSquare, endingSquare, pieceColor);
+    }
 }
 
 class King extends ChessPiece
@@ -216,4 +248,7 @@ class King extends ChessPiece
         return (validSteps >> Math.min(31, Math.abs(step))) & 1;
     }
 
+    canAttackSquare(startingSquare, endingSquare, pieceColor) {
+        return this.validateMovement(startingSquare, endingSquare, pieceColor);
+    }
 }
