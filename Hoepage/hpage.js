@@ -7,6 +7,6 @@ function aboutUs(){
 }
 
 function quitGame(){
-    if(confirm("do you wanna quit fr ong?"))
+    if(confirm("Would you really like to quit?"))
     window.close();
 }

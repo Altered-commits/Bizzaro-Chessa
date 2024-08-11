@@ -20,6 +20,20 @@ body {
     align-items: center;
 }
 
+.Logo {
+    width: 40dvh;
+    height: 40dvh;
+    background-image: url('../Logo/CHESS.jpg');
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat;
+    border-radius: 60%; 
+    border: 1px solid transparent; 
+    box-shadow: 0 0 20px 5px #DC1FFF;
+    transform: translateY(-50%);
+    overflow: hidden;
+}
+
 .PageActions {
     margin: 0;
     position: absolute; 
@@ -29,22 +43,35 @@ body {
     justify-content: center;
     align-items: center; 
     flex-wrap: wrap;
+    justify-content: space-around; 
+    transform: translateY(65%);
     z-index: 1;
 }
 
 .PageActions button {
     display: inline-block; 
     position: relative;
-    margin: 10px; 
+    margin: 15px; 
     padding: 10px 20px; 
     font-size: 16px;
     cursor: pointer;
     border: 2px  solid #DC1FFF;
     background-color: white;
-    color: linear-gradient(to left, #00FFA3, #DC1FFF);;
+    color: linear-gradient(to left, #00FFA3, #DC1FFF);
     border-radius: 8px;
     transition: background-color 200ms, color 200ms;
 }
+
+.BottomButtons {
+    display: flex;
+    justify-content: space-evenly;
+    position: relative;
+    margin: 15px; 
+    padding: 10px 20px; 
+    font-size: 16px;
+    cursor: pointer;
+    transform: translateY(70%);
+}    
 
 .PageActions button::before {
     content: "";
