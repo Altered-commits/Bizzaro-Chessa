@@ -6,14 +6,18 @@
     <title>Bizzaro Chessa</title>
     <link rel="stylesheet" href="hpage.css">
     <script src="hpage.js" defer></script>
+    <link rel="icon" href="../Logo/WEB.png" type="image/png">
 </head>
 <body>
     <div class = "HomeScreen">
+        <div class="Logo"></div>
         <div class = "PageActions">
             <button id = "playButton" onclick="startGame()">PLAY</button>
-            <button id = "setButton" onclick="setGame()">SETTINGS</button>
-            <button id = "aboutUs" onclick="aboutUs()">ABOUT US</button>
-            <button id = "Quit" onclick="quitGame()">QUIT</button>
+            <div class = "BottomButtons">
+                <button id = "setButton" onclick="setGame()">SETTINGS</button>
+                <button id = "aboutUs" onclick="aboutUs()">ABOUT US</button>
+                <button id = "Quit" onclick="quitGame()">QUIT</button>
+            </div>    
         </div>
     </div>    
 </body>
