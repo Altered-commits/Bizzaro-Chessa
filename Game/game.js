@@ -220,9 +220,9 @@ function restartGame() {
     location.reload();
 }
 
-function quitGame() {
-    if(confirm("do you wanna quit fr ong?"))
-        window.close();
+function quitGame(){
+    if(confirm("Would you really like to quit?"))
+    window.close();
 }
 
 //----------EVENT LISTENERS FOR DOCUMENTS AND WINDOWS----------
