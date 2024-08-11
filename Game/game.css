@@ -1,73 +1,78 @@
 body {
     margin: 0;
     padding: 0;
+
     width: 100%;
     height: 100dvh;
+
     background-image: url('../WallPaper/bizzchess.jpg');
-    background-color: rgb(164, 17, 177);
+    background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+
     overflow: hidden;
 }
 
-.ChessBorder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    position: relative;
-    padding-top: 3%;
-    align-items: center; 
-    position: relative;
-    box-sizing: border-box;
-    transform: translateY(-14%);
-}
-
 .White {
-    background-color: #fff8dc;
+    background-color: #f3e5ab;
 }
 
 .Black {
-    background-color: #954535;
+    background-color: #4b2d23;
 }
 
 .WhiteNumber {
-    color: #fff8dc;
+    color: #f3e5ab;
 }
 
 .BlackNumber {
-    color: #954535;
+    color: #4b2d23;
+}
+
+.ChessContainer {
+    width: 100%;
+    height: 100%;
+ 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.ChessTurn {
+    padding: 5px;
+    font-size: x-large;
+    color: wheat;
+
+    border: 4px solid wheat;
+    border-radius: 4px;
 }
 
 .ChessBoard {
-    height: 70vmin;
     width: 70vmin;
-    display: flex;
-    flex-wrap: wrap;
+    height: 70vmin;
+
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+
+    max-width: 500px;
+    max-height: 500px;
+
     border-style: solid;
     border-radius: 5px;
     border-width: 15px;
-    border-color: #4d2d1a;
-}
-
-.ChessRow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+    border-color: #2c1a12;
 }
 
 .ChessSquare {
     position: relative;
-    width: 12.5%;
-    height: 100%;
-    max-height: 100%;
 }
 
 .ChessSquare:hover {
     cursor: pointer;
-    box-shadow: 0px 0px 10px 5px aquamarine;
+    box-shadow: 0px 0px 10px 5px #ff80ff;
     z-index: 1;
 }
 
@@ -88,62 +93,80 @@ body {
 }
 
 .ChessPiece {
-    width: 90%;
+    width: 100%;
+    height: 100%;
     z-index: 1;
     cursor: pointer;
     position: absolute;
 }
 
 .ChessPiece img {
-    max-width: 100%;
     width: 100%;
+    height: 100%;
 }
 
 .ChessActions {
-    margin-top: -150px;
-    text-align: center;
     display: flex;
-    justify-content: center;
+
     flex-wrap: wrap;
+    justify-content: space-between;
+
+    width: 70vmin;
 }
 
 .ChessActions button {
     position: relative;
-    margin: 50px;
+    
+    overflow: hidden;
     padding: 10px 20px;
     font-size: 16px;
+    
     cursor: pointer;
-    border: 2px  solid #DC1FFF;
+    
+    border: 2px solid #ff80ff;
     border-radius: 50px;
-    background-color: white;
-    color: linear-gradient(to left, #00FFA3, #DC1FFF);;
-    border-radius: 8px;
-    transition: background-color 200ms, color 200ms;
-}
+    
+    color: #f3e5ab;
 
-.ChessActions button::before {
-    content: "";
-    position: absolute;
-    left: 1px;
-    right: 1px;
-    top: 1px;
-    bottom: 1px;
-    border-radius: 6px;
-    background-color: white;
-    z-index: -1;
-    transition: 200ms;
+    z-index: 1;
+
+    transition: color 400ms ease-in-out;
 }
 
 .ChessActions button:hover {
-    background: linear-gradient(to left, #00FFA3, #DC1FFF);
-    background-clip: text;
-    color: transparent;
+    color: #3e0a4f;
+}
+
+/* For background gradient transition */
+.ChessActions button::before {
+    content: '';
+    position: absolute;
+    
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    
+    background: linear-gradient(to left, #600c60, #aaffaa);
+    
+    z-index: -1;
+
+    transition: left 400ms ease-in-out;
 }
 
 .ChessActions button:hover::before {
-    opacity: 50%;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
+    left: 0;
+}
+
+/* Highlighting chess squares when moving pieces */
+.ChessSquareHighlightS, .ChessSquareHighlightE {
+    transition: background-color 200ms ease-in-out;
+}
+
+.ChessSquareHighlightS {
+    background-color: rgba(255, 128, 255, 0.7);
+}
+
+.ChessSquareHighlightE {
+    background-color: rgba(170, 255, 170, 0.7);
 }
