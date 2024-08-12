@@ -109,7 +109,7 @@ function switchTurns() {
 }
 
 //----------All functions to check if king in check or checkmate----------
-function isSquareUnderAttack(endSquareId, opponentColor) {
+function isSquareUnderAttack(endSquareId, opponentColor, isKing) {
     const attackingPieces = document.querySelectorAll(`.ChessPiece[id^=${opponentColor}]`);
     
     for (const piece of attackingPieces) {
@@ -117,6 +117,8 @@ function isSquareUnderAttack(endSquareId, opponentColor) {
         const pieceType = PIECE_CONFIG[pieceId];
 
         if (pieceType.canAttackSquare(piece.parentElement.id, endSquareId, opponentColor)) {
+            if(isKing)
+                checkingPiece = piece;
             return true;
         }
     }
@@ -125,12 +127,120 @@ function isSquareUnderAttack(endSquareId, opponentColor) {
 }
 
 function isKingInCheck(kingColor, opponentColor) {
-    const king         = document.querySelector(`.ChessPiece[id=${opponentColor}K1]`);
+    const king         = document.querySelector(`.ChessPiece[id=${kingColor}K1]`);
     const kingSquareId = king.parentElement.id;
 
-    return isSquareUnderAttack(kingSquareId, kingColor);
+    return isSquareUnderAttack(kingSquareId, opponentColor, true);
 }
 
+function getPossibleKingMoves(kingSquare, kingColor) {
+    const kingPosition = +kingSquare;
+    const kingPossibleMoves = [
+        kingPosition + 8,
+        kingPosition - 8,
+        kingPosition + 1,
+        kingPosition - 1,
+        kingPosition + 9,
+        kingPosition - 9,
+        kingPosition + 7,
+        kingPosition - 7,
+    ];
+
+    return kingPossibleMoves.filter((value) => {
+        //Bound checking: king should not go out of board
+        if(value > 63 || value < 0)
+            return false;
+        
+        const anotherPieceAtPosition = document.getElementById(value)?.querySelector(".ChessPiece");
+        //Either another piece shouldn't exist, or even if it does, it shouldn't be of same color as king
+        if(!anotherPieceAtPosition)
+            return true;
+
+        return (anotherPieceAtPosition.id[0] !== kingColor);
+    });
+}
+
+function getSquaresBetween(startSquare, endSquare) {
+    const squaresBetween = [];
+
+    const startSquareId = +startSquare;
+    const endSquareId   = +endSquare;
+
+    const rowStart = Math.floor(startSquareId / 8);
+    const colStart = startSquareId % 8;
+    const rowEnd = Math.floor(endSquareId / 8);
+    const colEnd = endSquareId % 8;
+
+    const rowStep = rowEnd > rowStart ? 1 : (rowEnd < rowStart ? -1 : 0);
+    const colStep = colEnd > colStart ? 1 : (colEnd < colStart ? -1 : 0);
+
+    let currentRow = rowStart + rowStep;
+    let currentCol = colStart + colStep;
+
+    while (currentRow !== rowEnd || currentCol !== colEnd) {
+        squaresBetween.push(currentRow * 8 + currentCol);
+        //For debugging purposes
+        // document.getElementById(currentRow * 8 + currentCol).classList.add("ChessSquareHighlightE");
+        currentRow += rowStep;
+        currentCol += colStep;
+    }
+
+    return squaresBetween;
+}
+
+function isCheckmate(kingColor, opponentColor) {
+    //Get the king and its square
+    const king       = document.querySelector(`.ChessPiece[id=${kingColor}K1]`);
+    const kingSquare = king.parentElement.id;
+
+    // 3 steps to check 'checkmate':
+    // 1) Can king move out of the way
+    // 2) Can piece checking king be 'captured'
+    // 3) Can pathway of piece checking king be blocked
+    
+    //----------STEP 1----------
+    const possibleMoves = getPossibleKingMoves(kingSquare, kingColor);
+    for(const move of possibleMoves) {
+        const startSquare = king.parentElement;
+        const endSquare   = document.getElementById(move);
+        
+        //Even if one move exists which is legal, we know that it can't be checkmate
+        if(isLegalMove(startSquare, endSquare, king, opponentColor))
+            return false;
+    }
+
+    //----------STEP 2----------
+    const allyPieces = document.querySelectorAll(`.ChessPiece[id^=${kingColor}]:not([id$='K1'])`);
+    for (const allyPiece of allyPieces) {
+        //Even if one ally piece can attack the piece checking 'king', return false
+        const pieceType   = PIECE_CONFIG[allyPiece.id];
+        const startSquare = allyPiece.parentElement.id;
+        const endSquare   = checkingPiece.parentElement.id;
+        
+        //If any one piece can capture the checking piece, then its not checkmate
+        if(pieceType.validateMovement(startSquare, endSquare, kingColor))
+            return false;
+    }
+
+    //----------STEP 3----------
+    const squaresBetween = getSquaresBetween(checkingPiece.parentElement.id, king.parentElement.id);
+    
+    for (const allyPiece of allyPieces) {
+        const pieceType   = PIECE_CONFIG[allyPiece.id];
+        const startSquare = allyPiece.parentElement.id;
+
+        //Check if ally pieces can block atleast one square (excluding king ofc)
+        for (const square of squaresBetween) {
+            if(pieceType.validateMovement(startSquare, square, kingColor))
+                return false;
+        }
+    }
+
+    //Checkmate
+    return true;
+}
+
+//----------Piece capturing / moving logic----------
 function isLegalMove(startSquare, endSquare, piece, opponentColor) {
     const pieceColor = piece.id[0];
     
@@ -139,7 +249,7 @@ function isLegalMove(startSquare, endSquare, piece, opponentColor) {
     originalEndSquarePiece ? endSquare.replaceChild(piece, originalEndSquarePiece) : endSquare.appendChild(piece);
 
     //Check if the king would be in check after the move
-    const isKingInCheckAfterMove = isKingInCheck(opponentColor, pieceColor);
+    const isKingInCheckAfterMove = isKingInCheck(pieceColor, opponentColor);
 
     //Revert the move
     startSquare.appendChild(piece);
@@ -152,7 +262,7 @@ function isLegalMove(startSquare, endSquare, piece, opponentColor) {
 
 function pieceCaptureOrMove(startSquare, endSquare, piece) {
     const pieceColor = piece.id[0];
-    const pieceType  = piece.id[1];
+
     //Check if the piece is of correct color (according to piece turn)
     if(pieceCurrentTurn !== pieceColor)
         return;
@@ -164,13 +274,10 @@ function pieceCaptureOrMove(startSquare, endSquare, piece) {
     {
         if(!isLegalMove(startSquare, endSquare, piece, opponentColor))
             return;
-        // if(pieceType === 'K') {
-        //     if(isSquareUnderAttack(endSquare.id, opponentColor)) {
-        //         return;
-        //     }
-        // }
+
         if(existingPiece) {
             if (existingPiece.id[0] !== pieceColor) {
+                checkingPiece = null;
                 endSquare.replaceChild(piece, existingPiece);
                 switchTurns();
             }
@@ -179,13 +286,21 @@ function pieceCaptureOrMove(startSquare, endSquare, piece) {
             endSquare.appendChild(piece);
             switchTurns();
         }
-        
+
+        const kingInCheck = isKingInCheck(opponentColor, pieceColor);
+        //If the king is in check, see if it's a checkmate or not
+        if(kingInCheck) {
+            const kingInCheckmate = isCheckmate(opponentColor, pieceColor);
+            if(kingInCheckmate)
+                console.log("CHECKMATE!!!!!!");
+        }
+
         removeHighlights();
         highlightSquares(startSquare, endSquare);
     }
 }
 
-// Add event listeners for drag-and-drop
+//----------Add event listeners for drag-and-drop-----------
 function setupDragDropEvents() {
     const chessPieces  = document.querySelectorAll('.ChessPiece');
     const chessSquares = document.querySelectorAll('.ChessSquare');
@@ -216,13 +331,15 @@ function setupDragDropEvents() {
     });
 }
 
+//----------Buttons----------
 function restartGame() {
-    location.reload();
+    if(confirm("Would you really like to reload?"))
+        location.reload();
 }
 
 function quitGame(){
     if(confirm("Would you really like to quit?"))
-    window.close();
+        window.close();
 }
 
 //----------EVENT LISTENERS FOR DOCUMENTS AND WINDOWS----------
