@@ -12,12 +12,16 @@
 </head>
 <body>
     <div class="ChessContainer">
+        <div class="ChessCheckmateScreen">
+            <div class="ChessCheckmate">CHECKMATE</div>
+            <div class="ChessCheckmateMessage">Someone won!</div>
+        </div>
         <div class="ChessTurn">White's Turn</div>
         <div class="ChessBoard"></div>
-        <div class = "ChessActions" id="buttons">
-            <button id ="restartButton" onclick="restartGame()">RESTART</button>
-            <button id ="undoButton" onclick="undoMove()">UNDO</button>
-            <button id ="quitButton" onclick="quitGame()">QUIT</button>
+        <div class = "ChessActions">
+            <button onclick="restartGame()">RESTART</button>
+            <button onclick="undoMove()">UNDO</button>
+            <button onclick="quitGame()">QUIT</button>
         </div>
     </div>
 </body>

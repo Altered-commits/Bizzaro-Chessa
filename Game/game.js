@@ -1,6 +1,7 @@
 //All of 'query selectors' or 'get elements'
-const chessBoard = document.querySelector('.ChessBoard');
-const chessTurn  = document.querySelector('.ChessTurn');
+const chessBoard      = document.querySelector('.ChessBoard');
+const chessTurn       = document.querySelector('.ChessTurn');
+const checkmateScreen = document.querySelector('.ChessCheckmateScreen');
 
 //Chess constants
 const CHESS_WIDTH = 8;
@@ -260,6 +261,13 @@ function isLegalMove(startSquare, endSquare, piece, opponentColor) {
     return !isKingInCheckAfterMove;
 }
 
+function showCheckmateScreen()
+{
+    checkmateScreen.classList.add("active");
+    //Checkmate message
+    checkmateScreen.getElementsByClassName("ChessCheckmateMessage")[0].innerHTML = `${pieceCurrentTurn === 'W' ? "Black" : "White"} Won!`;
+}
+
 function pieceCaptureOrMove(startSquare, endSquare, piece) {
     const pieceColor = piece.id[0];
 
@@ -291,8 +299,9 @@ function pieceCaptureOrMove(startSquare, endSquare, piece) {
         //If the king is in check, see if it's a checkmate or not
         if(kingInCheck) {
             const kingInCheckmate = isCheckmate(opponentColor, pieceColor);
+            //For now show the checkmate screen
             if(kingInCheckmate)
-                console.log("CHECKMATE!!!!!!");
+                showCheckmateScreen();
         }
 
         removeHighlights();

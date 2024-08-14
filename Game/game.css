@@ -170,3 +170,49 @@ body {
 .ChessSquareHighlightE {
     background-color: rgba(170, 255, 170, 0.7);
 }
+
+/* Checkmate screen */
+.ChessCheckmateScreen {
+    visibility: hidden;
+    opacity: 0;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(0, 0, 0, 0.8);
+
+    transition: opacity 0.4s ease-out;
+    z-index: 2;
+}
+
+.ChessCheckmate {
+    font-size: 6rem;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+
+    color: wheat;
+}
+
+.ChessCheckmateScreen.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.ChessCheckmateMessage {
+    font-size: 3rem;
+    font-family: 'Courier New', Courier, monospace;
+    
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    color: wheat;
+}
