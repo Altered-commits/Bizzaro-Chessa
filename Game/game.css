@@ -172,7 +172,7 @@ body {
 }
 
 /* Checkmate screen */
-.ChessCheckmateScreen {
+.ChessCheckOrStalemateScreen {
     visibility: hidden;
     opacity: 0;
 
@@ -194,21 +194,21 @@ body {
     z-index: 2;
 }
 
-.ChessCheckmate {
-    font-size: 6rem;
+.ChessCheckOrStalemate {
+    font-size: clamp(32px, 6vw, 100px);
     font-weight: bold;
     font-family: 'Courier New', Courier, monospace;
 
     color: wheat;
 }
 
-.ChessCheckmateScreen.active {
+.ChessCheckOrStalemateScreen.active {
     visibility: visible;
     opacity: 1;
 }
 
-.ChessCheckmateMessage {
-    font-size: 3rem;
+.ChessCheckOrStalemateMessage {
+    font-size: clamp(18px, 5vw, 40px);
     font-family: 'Courier New', Courier, monospace;
     
     margin-top: 20px;
