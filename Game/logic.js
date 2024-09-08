@@ -24,6 +24,11 @@ const PIECE_CONFIG = {
     "WR1": new Rook("WR1"), "WN1": new Knight("WN1"), "WB1": new Bishop("WB1"), "WQ1": new Queen("WQ1"), "WK1": new King("WK1"), "WB2": new Bishop("WB2"), "WN2": new Knight("WN2"), "WR2": new Rook("WR2"),
     "WP1": new Pawn("WP1"), "WP2": new Pawn("WP2"), "WP3": new Pawn("WP3"), "WP4": new Pawn("WP4"), "WP5": new Pawn("WP5"), "WP6": new Pawn("WP6"), "WP7": new Pawn("WP7"), "WP8": new Pawn("WP8")
 };
+//Used for pawn promotion
+const PROMOTION_COUNTER = {
+    WQ: 3, WR: 3, WB: 3, WN: 3,
+    BQ: 3, BR: 3, BB: 3, BN: 3
+};
 
 //Some data which can be changed
 let pieceStartingSquare = null;
@@ -159,6 +164,7 @@ function getSquaresBetween(startSquare, endSquare) {
     let currentRow = rowStart + rowStep;
     let currentCol = colStart + colStep;
 
+    ///BUG FIXING
     while (currentRow !== rowEnd || currentCol !== colEnd) {
         squaresBetween.push(currentRow * 8 + currentCol);
 
@@ -284,7 +290,7 @@ function showStalemateScreen() {
     gameEndScreen.classList.add("active");
 }
 
-function pieceMoved(startSquare, endSquare) {
+function afterPieceMovement(startSquare, endSquare) {
     //We switch turns
     switchTurns();
 
@@ -316,12 +322,81 @@ function moveOrCapture(endSquare, piece) {
     const existingPiece = endSquare.querySelector(".ChessPiece");
 
     if(existingPiece) {
+        const pieceType     = existingPiece.id[1];
+        const pieceNumber   = +existingPiece.id[2];
+
+        //If the number is gteq 3 and it is not a pawn, then we delete it's entry from PIECE_CONFIG
+        if(pieceNumber >= 3 && pieceType !== 'P')
+            delete PIECE_CONFIG[existingPiece.id];
+
+        //Rest of the logic
         checkingPiece = null;
         endSquare.replaceChild(piece, existingPiece);
         totalPieces -= 1;
     }
     else
         endSquare.appendChild(piece);
+}
+
+//----------Special moves----------
+function promotePawn(pawn, square) {
+    const promotionChoice = prompt("Promote to: (Q)ueen, (R)ook, (B)ishop, (K)night").toUpperCase();
+    let newPieceId = null;
+    let newPiece   = null;
+    
+    switch (promotionChoice) {
+        default:
+        case 'Q':
+            newPieceId = `${pawn.id[0]}Q${PROMOTION_COUNTER[`${pawn.id[0]}Q`]++}`;
+            newPiece   = new Queen(newPieceId);
+            break;
+        case 'R':
+            newPieceId = `${pawn.id[0]}R${PROMOTION_COUNTER[`${pawn.id[0]}R`]++}`;
+            newPiece   = new Rook(newPieceId);
+            break;
+        case 'B':
+            newPieceId = `${pawn.id[0]}B${PROMOTION_COUNTER[`${pawn.id[0]}B`]++}`;
+            newPiece   = new Bishop(newPieceId);
+            break;
+        case 'K':
+            newPieceId = `${pawn.id[0]}N${PROMOTION_COUNTER[`${pawn.id[0]}N`]++}`;
+            newPiece   = new Knight(newPieceId);
+            break;
+    }
+    
+    //Add new piece to piece config
+    PIECE_CONFIG[newPieceId] = newPiece;
+    
+    //Create the piece
+    const renderedPiece = newPiece.render();
+    
+    //Add event listeners to the piece
+    renderedPiece.setAttribute("draggable", true);
+    renderedPiece.addEventListener("dragstart", handleDragStart);
+    
+    //And promote the pawn
+    square.replaceChild(renderedPiece, pawn);
+}
+
+function checkSpecialMoves(endSquare, piece) {
+    const endSquareId = +endSquare.id;
+
+    const pieceType  = piece.id[1];
+    const pieceColor = piece.id[0];
+
+    const endRow  = Math.floor(endSquareId / 8);
+
+    //If it's a pawn, check for two things
+    //1) Pawn promotion
+    //2) En Passant
+    //If it's a king, check for castling
+
+    switch (pieceType) {
+        case 'P':
+            if(endRow === (pieceColor === 'W' ? 0 : 7))
+                promotePawn(piece, endSquare);
+            break;
+    }
 }
 
 function handleValidateCaptureOrMove(startSquare, endSquare, piece) {
@@ -338,16 +413,13 @@ function handleValidateCaptureOrMove(startSquare, endSquare, piece) {
     if(!isLegalMove(startSquare, endSquare, piece, opponentColor)) return;
 
     moveOrCapture(endSquare, piece);
-
-    pieceMoved(startSquare, endSquare);
-
+    checkSpecialMoves(endSquare, piece);
+    afterPieceMovement(startSquare, endSquare);
     updateGameState(opponentColor, pieceColor);
 }
 
 //----------Add event listeners for drag-and-drop-----------
 function handleDragStart(e) {
-    console.time('handleDragStart');  // Start timing
-
     const piece         = e.target.parentElement; //Get the piece
     const pieceId       = piece.id;               //Get the piece id
     const startSquare   = piece.parentElement;    //Get the square
@@ -368,8 +440,6 @@ function handleDragStart(e) {
     //Store the piece ID and it's starting square
     e.dataTransfer.setData('pieceId', pieceId);
     pieceStartingSquare = piece.parentElement;
-
-    console.timeEnd('handleDragStart');
 }
 
 function handleDragOver(e) {
@@ -432,6 +502,21 @@ function resetDomElements() {
         //By default we go with 'stalemate' screen
         gameEndScreen.children[0].innerHTML = 'STALEMATE';
         gameEndScreen.children[1].innerHTML = 'DRAW'
+    }
+}
+
+function resetPieceConfig() {
+    //Reset promotion counter to 3
+    for (const key in PROMOTION_COUNTER)
+        PROMOTION_COUNTER[key] = 3;
+
+    //Reset piece config to remove promoted pieces
+    for (const key in PIECE_CONFIG) {
+        const pieceType = key[1];
+        const pieceNum  = +key[2];
+
+        if(pieceNum >= 3 && pieceType !== 'P')
+            delete PIECE_CONFIG[key];
     }
 }
 

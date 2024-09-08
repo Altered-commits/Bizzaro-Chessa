@@ -3,6 +3,7 @@ function restartGame() {
     if(confirm("Would you really like to restart the game?")) {
         cleanupDragDropEvents();
         resetDomElements();
+        resetPieceConfig();
         resetPieceStates();
         
         //New board
