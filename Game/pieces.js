@@ -13,18 +13,6 @@ class ChessPiece {
         return pieceDiv;
     }
 
-    validateMovement(startingSquare, endingSquare, pieceColor) {
-        return false;
-    }
-
-    canAttackSquare(startingSquare, endingSquare, pieceColor) {
-        return false;
-    }
-
-    getPossibleMoves(startingSquare, pieceColor) {
-        return [];
-    }
-
     //Internal function
     wrapCheck(startId, endId, limit) {
         //Boundary check for rows and columns
@@ -50,9 +38,7 @@ class ChessPiece {
         const possibleMoves = [];
         
         //Directions for Rook: up, down, left, right
-        const directions = pieceMovements;
-        
-        directions.forEach((step) => {
+        pieceMovements.forEach((step) => {
             let currentId = startId + step;
             let absStep   = Math.abs(step);
             
@@ -81,6 +67,7 @@ class Pawn extends ChessPiece
     constructor(id) {
         super(id);
         this.startingPawnMovement = true;
+        this.canEnPassantCapture  = false;
     }
 
     validateMovement(startingSquare, endingSquare, pieceColor) {
@@ -91,26 +78,21 @@ class Pawn extends ChessPiece
 
         const forwardOne    = startId - 8 * direction;
         const forwardTwo    = startId - 16 * direction;
-        //If the piece is at the end most columns, diagonalLeft or diagonalRight will be -1
-        //Basically, wrap checking
-        const diagonalLeft = (startId % 8 !== 0)
-                            ? startId + (direction === 1 ? -9 : 7)
-                            : -1;
-
-        const diagonalRight = (startId % 8 !== 7)
-                            ? startId + (direction === 1 ? -7 : 9)
-                            : -1;
-
+        //If the piece is at the end most columns, diagonalLeft or diagonalRight will be -1. Basically, wrap checking
+        const diagonalLeft  = (startId % 8 !== 0) ? startId + (direction === 1 ? -9 : 7) : -1;
+        const diagonalRight = (startId % 8 !== 7) ? startId + (direction === 1 ? -7 : 9) : -1;
+        
         //Forward movement one block
         if((endId == forwardOne) && !document.getElementById(forwardOne).querySelector(".ChessPiece")) {
             this.startingPawnMovement = false;
+            this.canEnPassantCapture  = false;
             return true;
         }
         
         //Diagonal capture
         if(((endId == diagonalLeft) || (endId == diagonalRight)) && document.getElementById(endId).querySelector(".ChessPiece")) {
-            //Always set this to false
             this.startingPawnMovement = false;
+            this.canEnPassantCapture  = false;
             return true;
         }
         
@@ -120,6 +102,7 @@ class Pawn extends ChessPiece
                                   !document.getElementById(forwardTwo).querySelector(".ChessPiece");
             
             this.startingPawnMovement = hindrancePieces ? false : true;
+            
             return hindrancePieces;
         }
 
@@ -155,7 +138,7 @@ class Pawn extends ChessPiece
         //Forwards
         if(!fwdSqrOccupied)
             possibleMoves.push(forwardOne);
-        if(!fwdSqrOccupied && !document.getElementById(forwardTwo)?.querySelector(".ChessPiece"))
+        if(this.startingPawnMovement && !fwdSqrOccupied && !document.getElementById(forwardTwo)?.querySelector(".ChessPiece"))
             possibleMoves.push(forwardTwo);
         //Diagonals
         if(diagonalLeft > -1) {
@@ -171,11 +154,15 @@ class Pawn extends ChessPiece
 
         return possibleMoves;
     }
+
+    resetState() {
+        this.startingPawnMovement = true;
+    }
 }
 
 class Rook extends ChessPiece
 {
-    validateMovement(startingSquare, endingSquare, pieceColor) {
+    validateMovement(startingSquare, endingSquare, _pieceColor) {
         const startId = +startingSquare;
         const endId   = +endingSquare;
 
@@ -217,7 +204,7 @@ class Rook extends ChessPiece
 
 class Bishop extends ChessPiece
 {
-    validateMovement(startingSquare, endingSquare, pieceColor) {
+    validateMovement(startingSquare, endingSquare, _pieceColor) {
         const startId = +startingSquare;
         const endId   = +endingSquare;
 
@@ -262,7 +249,7 @@ class Bishop extends ChessPiece
 
 class Knight extends ChessPiece
 {
-    validateMovement(startingSquare, endingSquare, pieceColor) {
+    validateMovement(startingSquare, endingSquare, _pieceColor) {
         const startId = +startingSquare;
         const endId   = +endingSquare;
         
@@ -309,7 +296,7 @@ class Knight extends ChessPiece
 
 class Queen extends ChessPiece
 {
-    validateMovement(startingSquare, endingSquare, pieceColor) {
+    validateMovement(startingSquare, endingSquare, _pieceColor) {
         const startId = +startingSquare;
         const endId   = +endingSquare;
 
@@ -317,19 +304,21 @@ class Queen extends ChessPiece
         const directionStraight = (endId - startId);
         
         // Check if the move is horizontal or vertical
-        const isVertical = (startId % 8 === endId % 8);
+        const isVertical   = (startId % 8 === endId % 8);
         const isHorizontal = (Math.floor(startId / 8) === Math.floor(endId / 8));
 
         const startRow = Math.floor(startId / 8);
         const startCol = startId % 8;
-        const endRow = Math.floor(endId / 8);
-        const endCol = endId % 8;
+        const endRow   = Math.floor(endId / 8);
+        const endCol   = endId % 8;
 
+        const rowDiff = Math.abs(startRow - endRow);
+        const colDiff = Math.abs(startCol - endCol);
 
-        if ((!isVertical && !isHorizontal && (Math.abs(startRow - endRow) !== Math.abs(startCol - endCol))))
+        if ((!isVertical && !isHorizontal && (rowDiff !== colDiff)))
             return false;
         
-        if ((Math.abs(startRow - endRow) === Math.abs(startCol - endCol))){ 
+        if ((rowDiff === colDiff)){ 
             const rowDirection = (endRow > startRow) ? 1 : -1;
             const colDirection = (endCol > startCol) ? 1 : -1;
     
@@ -376,7 +365,7 @@ class Queen extends ChessPiece
 
 class King extends ChessPiece
 {
-    validateMovement(startingSquare, endingSquare, pieceColor) {
+    validateMovement(startingSquare, endingSquare, _pieceColor) {
         const startId = +startingSquare;
         const endId   = +endingSquare;
         

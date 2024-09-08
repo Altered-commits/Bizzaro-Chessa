@@ -6,23 +6,24 @@
     <title>Bizzaro Chessa</title>
     
     <link rel="stylesheet" href="game.css">
-    <script src="pieces.js" defer></script>
-    <script src="game.js" defer></script>
-    <script src="index.js" defer></script>
     <link rel="icon" href="../Logo/WEB.png" type="image/png">
+
+    <script src="pieces.js" defer></script>
+    <script src="logic.js"  defer></script>
+    <script src="game.js"   defer></script>
 </head>
 <body>
     <div class="ChessContainer">
-        <div class="ChessCheckOrStalemateScreen">
+        <div class="GameEndScreen">
             <!-- By default let's assume it's stalemate -->
-            <div class="ChessCheckOrStalemate">STALEMATE</div>
-            <div class="ChessCheckOrStalemateMessage">Draw.</div>
+            <div class="GameEndType">STALEMATE</div>
+            <div class="GameEndMessage">Draw</div>
         </div>
         <div class="ChessTurn">White's Turn</div>
         <div class="ChessBoard"></div>
         <div class = "ChessActions">
             <button onclick="restartGame()">RESTART</button>
-            <button onclick="undoMove()">UNDO</button>
+            <button onclick="drawGame()">DRAW</button>
             <button onclick="quitGame()">QUIT</button>
         </div>
     </div>

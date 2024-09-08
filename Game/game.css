@@ -111,15 +111,18 @@ body {
     flex-wrap: wrap;
     justify-content: space-between;
 
-    width: 70vmin;
+    width: clamp(150px, 50vw, 550px);
 }
 
 .ChessActions button {
     position: relative;
     
     overflow: hidden;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 5px;
+    margin: 5px;
+    font-size: medium;
+
+    width: 150px;
     
     cursor: pointer;
     
@@ -172,7 +175,7 @@ body {
 }
 
 /* Checkmate screen */
-.ChessCheckOrStalemateScreen {
+.GameEndScreen {
     visibility: hidden;
     opacity: 0;
 
@@ -194,7 +197,7 @@ body {
     z-index: 2;
 }
 
-.ChessCheckOrStalemate {
+.GameEndType {
     font-size: clamp(32px, 6vw, 100px);
     font-weight: bold;
     font-family: 'Courier New', Courier, monospace;
@@ -202,12 +205,12 @@ body {
     color: wheat;
 }
 
-.ChessCheckOrStalemateScreen.active {
+.GameEndScreen.active {
     visibility: visible;
     opacity: 1;
 }
 
-.ChessCheckOrStalemateMessage {
+.GameEndMessage {
     font-size: clamp(18px, 5vw, 40px);
     font-family: 'Courier New', Courier, monospace;
     
@@ -215,4 +218,11 @@ body {
     margin-bottom: 20px;
 
     color: wheat;
+}
+
+/* Media queries */
+@media screen and (max-width: 960px) {
+    .ChessActions {
+        justify-content: center;
+    }
 }
