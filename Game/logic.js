@@ -26,8 +26,8 @@ const PIECE_CONFIG = {
 };
 //Used for pawn promotion
 const PROMOTION_COUNTER = {
-    WQ: 3, WR: 3, WB: 3, WN: 3,
-    BQ: 3, BR: 3, BB: 3, BN: 3
+    "WQ": 3, "WR": 3, "WB": 3, "WN": 3,
+    "BQ": 3, "BR": 3, "BB": 3, "BN": 3
 };
 
 //Some data which can be changed
@@ -40,17 +40,7 @@ let totalPieces = CHESS_PIECE_ARRANGEMENT.reduce((acc, row) => {
     return acc + row.length;
 }, 0);
 
-//----------Helper Functions----------
-function removeHighlights() {
-    document.querySelector(".ChessSquareHighlightS")?.classList.remove("ChessSquareHighlightS");
-    document.querySelector(".ChessSquareHighlightE")?.classList.remove("ChessSquareHighlightE");
-}
-
-function highlightSquares(startSquare, endSquare) {
-    startSquare.classList.add('ChessSquareHighlightS');
-    endSquare.classList.add('ChessSquareHighlightE');
-}
-
+//----------Chess setup----------
 function setupChessBoard() {
     let invertColor = 1;
 
@@ -99,10 +89,10 @@ function setupChessBoard() {
             }
             
             //Add pieces to square if they exist
-            const piece = CHESS_PIECE_ARRANGEMENT[row][col]
+            const pieceId = CHESS_PIECE_ARRANGEMENT[row][col]
 
-            if(piece)
-                square.appendChild(PIECE_CONFIG[piece].render());
+            if(pieceId)
+                square.appendChild(PIECE_CONFIG[pieceId].render());
 
             //Finally append the completed square
             chessBoard.append(square);
@@ -164,7 +154,10 @@ function getSquaresBetween(startSquare, endSquare) {
     let currentRow = rowStart + rowStep;
     let currentCol = colStart + colStep;
 
-    ///BUG FIXING
+    //Invalid diagonal move
+    if (Math.abs(rowEnd - rowStart) !== Math.abs(colEnd - colStart) && (rowStep !== 0 && colStep !== 0))
+        return [];
+
     while (currentRow !== rowEnd || currentCol !== colEnd) {
         squaresBetween.push(currentRow * 8 + currentCol);
 
@@ -286,22 +279,20 @@ function showCheckmateScreen()
 }
 
 function showStalemateScreen() {
-    //By default it shows the stalemate message
-    gameEndScreen.classList.add("active");
+    //If the GameEndScreen already exists, then don't do anything
+    if(!gameEndScreen.classList.contains("active"))
+        //By default it shows the stalemate message
+        gameEndScreen.classList.add("active");
 }
 
-function afterPieceMovement(startSquare, endSquare) {
-    //We switch turns
-    switchTurns();
-
+function afterPieceMovement() {
     //Play the audio for piece movement
     pieceMovementAudio.play().catch(error => {
         console.error("Error playing audio:", error);
     });
 
-    // //Remove old highlights and add new highlights to the piece which moved
-    // removeHighlights();
-    // highlightSquares(startSquare, endSquare);
+    //We switch turns
+    switchTurns();
 }
 
 //Update the game state (check, checkmate, stalemate)
@@ -399,6 +390,7 @@ function checkSpecialMoves(endSquare, piece) {
     }
 }
 
+//----------Main function checking and validating moves----------
 function handleValidateCaptureOrMove(startSquare, endSquare, piece) {
     const pieceColor = piece.id[0];
 
@@ -414,7 +406,7 @@ function handleValidateCaptureOrMove(startSquare, endSquare, piece) {
 
     moveOrCapture(endSquare, piece);
     checkSpecialMoves(endSquare, piece);
-    afterPieceMovement(startSquare, endSquare);
+    afterPieceMovement();
     updateGameState(opponentColor, pieceColor);
 }
 
@@ -502,6 +494,9 @@ function resetDomElements() {
         //By default we go with 'stalemate' screen
         gameEndScreen.children[0].innerHTML = 'STALEMATE';
         gameEndScreen.children[1].innerHTML = 'DRAW'
+
+        //Remove it from screen
+        gameEndScreen.classList.remove("active");
     }
 }
 

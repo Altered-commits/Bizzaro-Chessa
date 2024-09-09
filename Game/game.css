@@ -112,6 +112,9 @@ body {
     justify-content: space-between;
 
     width: clamp(150px, 50vw, 550px);
+
+    /* Keep it at the very top */
+    z-index: 10;
 }
 
 .ChessActions button {
@@ -162,15 +165,8 @@ body {
 }
 
 /* Highlighting chess squares when moving pieces */
-.ChessSquareHighlightS, .ChessSquareHighlightE {
-    transition: background-color 200ms ease-in-out;
-}
-
-.ChessSquareHighlightS {
-    background-color: rgba(255, 128, 255, 0.7);
-}
-
 .ChessSquareHighlightE {
+    transition: background-color 200ms ease-in-out;
     background-color: rgba(170, 255, 170, 0.7);
 }
 
