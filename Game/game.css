@@ -30,7 +30,7 @@ body {
     color: #4b2d23;
 }
 
-.ChessContainer {
+.GameContainer {
     width: 100%;
     height: 100%;
  
@@ -47,6 +47,46 @@ body {
 
     border: 4px solid wheat;
     border-radius: 4px;
+
+    background-color: rgba(23, 16, 1, 0.247);
+}
+
+/* Chess container: Chess board and Timer */
+.ChessContainer {
+    width: 100%;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+}
+
+.ChessTimerWrapper {
+    width: 200px;
+    height: 100px;
+
+    color: wheat;
+    background-color: rgba(23, 16, 1, 0.247);
+
+    border: 4px solid wheat;
+    border-radius: 4px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    font-size: larger;
+    font-family: monospace;
+    text-align: center;
+    
+    position: absolute;
+    left: 20px;
+}
+
+.ChessTimer {
+    margin: 10px 0px;
 }
 
 .ChessBoard {
@@ -105,7 +145,7 @@ body {
     height: 100%;
 }
 
-.ChessActions {
+.GameActions {
     display: flex;
 
     flex-wrap: wrap;
@@ -117,7 +157,7 @@ body {
     z-index: 10;
 }
 
-.ChessActions button {
+.GameActions button {
     position: relative;
     
     overflow: hidden;
@@ -130,7 +170,7 @@ body {
     cursor: pointer;
     
     border: 2px solid #ff80ff;
-    border-radius: 50px;
+    border-radius: 10px;
     
     color: #f3e5ab;
 
@@ -139,12 +179,12 @@ body {
     transition: color 400ms ease-in-out;
 }
 
-.ChessActions button:hover {
+.GameActions button:hover {
     color: #3e0a4f;
 }
 
 /* For background gradient transition */
-.ChessActions button::before {
+.GameActions button::before {
     content: '';
     position: absolute;
     
@@ -160,14 +200,19 @@ body {
     transition: left 400ms ease-in-out;
 }
 
-.ChessActions button:hover::before {
+.GameActions button:hover::before {
     left: 0;
 }
 
 /* Highlighting chess squares when moving pieces */
-.ChessSquareHighlightE {
+.ChessSquareHighlightE, .ChessSquareHighlightR {
     transition: background-color 200ms ease-in-out;
+}
+.ChessSquareHighlightE {
     background-color: rgba(170, 255, 170, 0.7);
+}
+.ChessSquareHighlightR {
+    background-color: rgba(226, 31, 31, 0.633);
 }
 
 /* Checkmate screen */
@@ -218,7 +263,10 @@ body {
 
 /* Media queries */
 @media screen and (max-width: 960px) {
-    .ChessActions {
+    .GameActions {
         justify-content: center;
+    }
+    .GameActions button {
+        width: 110px;
     }
 }

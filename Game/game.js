@@ -9,6 +9,7 @@ function restartGame() {
         //New board
         setupChessBoard();
         setupDragDropEvents();
+        setupChessRandomizerTimer(); //It is being cleaned in resetDomElements
     }
 }
 
@@ -26,4 +27,5 @@ function drawGame() {
 window.addEventListener('DOMContentLoaded', () => {
     setupChessBoard();
     setupDragDropEvents();
+    setupChessRandomizerTimer();
 });

@@ -2,6 +2,7 @@
 const chessBoard    = document.querySelector('.ChessBoard');
 const chessTurn     = document.querySelector('.ChessTurn');
 const gameEndScreen = document.querySelector('.GameEndScreen');
+const chessTimer    = document.querySelector('.ChessTimer');
 
 //Audio
 const pieceMovementAudio = new Audio("../SFX/PieceMovementAudio.mp3");
@@ -36,11 +37,101 @@ let pieceMovableSquares = []
 let pieceCurrentTurn    = 'W';
 let checkingPiece       = null;
 //Dynamically calculate total pieces
-let totalPieces = CHESS_PIECE_ARRANGEMENT.reduce((acc, row) => {
-    return acc + row.length;
-}, 0);
+let totalPieces         = CHESS_PIECE_ARRANGEMENT.reduce((acc, row) => {
+                                return acc + row.length;
+                            }, 0);
+let chessTimerInterval  = null;
 
-//----------Chess setup----------
+//----------Helper functions----------
+function shuffleArray(array) {
+    //Shuffle the square indices (Fisher-Yates shuffle)
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function randomizePieces() {
+    const chessSquares = chessBoard.querySelectorAll('.ChessSquare');
+    let pieceIndex     = 0;
+    let whitePieces    = [];
+    let blackPieces    = [];
+
+    // Collect all pieces currently on the board
+    chessSquares.forEach(square => {
+        const piece = square.querySelector('.ChessPiece');
+        if (piece) {
+            const square = piece.parentElement;
+
+            if(piece.id[0] === 'W')
+                whitePieces.push({piece, square});
+            else
+                blackPieces.push({piece, square});
+            
+            //Remove the piece from the board
+            square.removeChild(piece);
+        }
+    });
+    
+    // Shuffle the square indices (Fisher-Yates shuffle)
+    shuffleArray(whitePieces);
+    shuffleArray(blackPieces);
+    
+    //Pieces accessed in reverse order, squares accessed in forward order
+    pieceIndex = whitePieces.length - 1;
+    whitePieces.forEach(({_, square}) => {
+        square.appendChild(whitePieces[pieceIndex].piece);
+        pieceIndex--;
+    });
+
+    pieceIndex = blackPieces.length - 1;
+    blackPieces.forEach(({_, square}) => {
+        square.appendChild(blackPieces[pieceIndex].piece);
+        pieceIndex--;
+    });
+
+    //Dont forget the event listeners
+    setupDragDropEvents();
+}
+
+function switchTurnsUpdateGameState() {
+    if(pieceCurrentTurn === 'W' && isKingInCheck('B', 'W') ||
+       pieceCurrentTurn === 'B' && isKingInCheck('W', 'B'))
+        switchTurns();
+    
+    //And also just for fun, check for checkmate
+    return updateGameState(pieceCurrentTurn === 'W' ? 'B' : 'W', pieceCurrentTurn)
+}
+
+function setupChessRandomizerTimer() {
+    let timeRemaining = 16; //In seconds
+
+    // Update the timer every second
+    chessTimerInterval = setInterval(() => {
+        // Calculate minutes and seconds
+        let minutes = Math.floor(timeRemaining / 60);
+        let seconds = timeRemaining % 60;
+
+        // Display the time in mm:ss format
+        chessTimer.innerHTML = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        // If time reaches 0, restart the timer if needed
+        if (timeRemaining === 0) {
+            clearInterval(chessTimerInterval); // Stop the current interval
+            randomizePieces();
+
+            //If it's checkmate or stalemate, then no need to start the timer again
+            if(switchTurnsUpdateGameState())
+                return;
+
+            setupChessRandomizerTimer(); // Restart the timer
+        }
+        else
+            timeRemaining--; // Decrement the time
+        
+    }, 1000);
+}
+
 function setupChessBoard() {
     let invertColor = 1;
 
@@ -114,7 +205,7 @@ function switchTurns() {
 
 //----------All functions to check if (king in check or checkmate) or stalemate----------
 function isSquareUnderAttack(endSquareId, opponentColor, isKing) {
-    const attackingPieces = document.querySelectorAll(`.ChessPiece[id^=${opponentColor}]`);
+    const attackingPieces = chessBoard.querySelectorAll(`.ChessPiece[id^=${opponentColor}]`);
     
     for (const piece of attackingPieces) {
         const pieceId = piece.id;
@@ -131,10 +222,21 @@ function isSquareUnderAttack(endSquareId, opponentColor, isKing) {
 }
 
 function isKingInCheck(kingColor, opponentColor) {
-    const king         = document.querySelector(`.ChessPiece[id=${kingColor}K1]`);
-    const kingSquareId = king.parentElement.id;
+    const king         = chessBoard.querySelector(`.ChessPiece[id=${kingColor}K1]`);
+    const kingSquare   = king.parentElement;
+    const kingSquareId = kingSquare.id;
 
-    return isSquareUnderAttack(kingSquareId, opponentColor, true);
+    const isKingSquareUnderAttack = isSquareUnderAttack(kingSquareId, opponentColor, true);
+
+    //Make the square highlighted when king is under check if it isn't already
+    if(isKingSquareUnderAttack && !kingSquare.classList.contains("ChessSquareHighlightR")) {
+        kingSquare.classList.add("ChessSquareHighlightR");
+        setTimeout(() => { //Remove it after 4 seconds
+            kingSquare.classList.remove("ChessSquareHighlightR");
+        }, 3000);
+    }
+
+    return isKingSquareUnderAttack
 }
 
 function getSquaresBetween(startSquare, endSquare) {
@@ -170,7 +272,7 @@ function getSquaresBetween(startSquare, endSquare) {
 
 function isCheckmate(kingColor, opponentColor) {
     //Get the king and its square
-    const king       = document.querySelector(`.ChessPiece[id=${kingColor}K1]`);
+    const king       = chessBoard.querySelector(`.ChessPiece[id=${kingColor}K1]`);
     const kingPiece  = PIECE_CONFIG[king.id];
     const kingSquare = king.parentElement.id;
 
@@ -191,7 +293,7 @@ function isCheckmate(kingColor, opponentColor) {
     }
 
     //----------STEP 2----------
-    const allyPieces = document.querySelectorAll(`.ChessPiece[id^=${kingColor}]:not([id$='K1'])`);
+    const allyPieces = chessBoard.querySelectorAll(`.ChessPiece[id^=${kingColor}]:not([id$='K1'])`);
     for (const allyPiece of allyPieces) {
         //Even if one ally piece can attack the piece checking 'king', return false
         const pieceType   = PIECE_CONFIG[allyPiece.id];
@@ -223,7 +325,7 @@ function isCheckmate(kingColor, opponentColor) {
 
 function isStalemate(pieceColor) {
     //Get all pieces of the pieceColor
-    const pieces = document.querySelectorAll(`.ChessPiece[id^=${pieceColor}]`);
+    const pieces = chessBoard.querySelectorAll(`.ChessPiece[id^=${pieceColor}]`);
 
     //For each piece, get it's piece config and check for valid moves, if no valid move, stalemate occurs
     for (const piece of pieces) {
@@ -276,6 +378,10 @@ function showCheckmateScreen()
 
     //Finally display the message
     gameEndScreen.classList.add("active");
+
+    //Clear the timer as well
+    if(chessTimerInterval)
+        clearInterval(chessTimerInterval);
 }
 
 function showStalemateScreen() {
@@ -283,6 +389,10 @@ function showStalemateScreen() {
     if(!gameEndScreen.classList.contains("active"))
         //By default it shows the stalemate message
         gameEndScreen.classList.add("active");
+    
+    //Clear the timer as well
+    if(chessTimerInterval)
+        clearInterval(chessTimerInterval);
 }
 
 function afterPieceMovement() {
@@ -295,16 +405,18 @@ function afterPieceMovement() {
     switchTurns();
 }
 
-//Update the game state (check, checkmate, stalemate)
+//Update the game state (checkmate, stalemate)
 function updateGameState(opponentColor, pieceColor) {
     //If the king is in check, check for checkmate
     if (isKingInCheck(opponentColor, pieceColor)) {
         if (isCheckmate(opponentColor, pieceColor)) {
             showCheckmateScreen();
+            return true;
         }
     } else if (totalPieces < 12) { //Delay stalemate check until less than 12 pieces remain
         if (isStalemate(opponentColor)) {
             showStalemateScreen();
+            return true;
         }
     }
 }
@@ -456,9 +568,17 @@ function handleDrop(e) {
     handleValidateCaptureOrMove(pieceStartingSquare, pieceEndingSquare, piece);
 }
 
+function setDragEventsOnly() {
+    const chessPieces  = chessBoard.querySelectorAll('.ChessPiece');
+    chessPieces.forEach((piece) => {
+        piece.setAttribute('draggable', true);
+        piece.addEventListener('dragstart', handleDragStart);
+    });
+}
+
 function setupDragDropEvents() {
-    const chessPieces  = document.querySelectorAll('.ChessPiece');
-    const chessSquares = document.querySelectorAll('.ChessSquare');
+    const chessPieces  = chessBoard.querySelectorAll('.ChessPiece');
+    const chessSquares = chessBoard.querySelectorAll('.ChessSquare');
 
     chessPieces.forEach((piece) => {
         piece.setAttribute('draggable', true);
@@ -473,8 +593,8 @@ function setupDragDropEvents() {
 
 //----------Cleanup functions----------
 function cleanupDragDropEvents() {
-    const chessPieces = document.querySelectorAll('.ChessPiece');
-    const chessSquares = document.querySelectorAll('.ChessSquare');
+    const chessPieces = chessBoard.querySelectorAll('.ChessPiece');
+    const chessSquares = chessBoard.querySelectorAll('.ChessSquare');
 
     chessPieces.forEach((piece) => {
         piece.removeEventListener('dragstart', handleDragStart);
@@ -498,6 +618,9 @@ function resetDomElements() {
         //Remove it from screen
         gameEndScreen.classList.remove("active");
     }
+    //Clear the timer as well
+    if(chessTimerInterval)
+        clearInterval(chessTimerInterval);
 }
 
 function resetPieceConfig() {

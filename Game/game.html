@@ -13,15 +13,21 @@
     <script src="game.js"   defer></script>
 </head>
 <body>
-    <div class="ChessContainer">
+    <div class="GameContainer">
         <div class="GameEndScreen">
             <!-- By default let's assume it's stalemate -->
             <div class="GameEndType">STALEMATE</div>
             <div class="GameEndMessage">Draw</div>
         </div>
         <div class="ChessTurn">White's Turn</div>
-        <div class="ChessBoard"></div>
-        <div class = "ChessActions">
+        <div class="ChessContainer">
+            <div class="ChessTimerWrapper">
+                TIME UNTIL RANDOMIZER
+                <div class="ChessTimer">00:00</div>
+            </div>
+            <div class="ChessBoard"></div>
+        </div>
+        <div class = "GameActions">
             <button onclick="restartGame()">RESTART</button>
             <button onclick="drawGame()">DRAW</button>
             <button onclick="quitGame()">QUIT</button>
