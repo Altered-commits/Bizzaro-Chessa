@@ -100,11 +100,11 @@ function switchTurnsUpdateGameState() {
         switchTurns();
     
     //And also just for fun, check for checkmate
-    return updateGameState(pieceCurrentTurn === 'W' ? 'B' : 'W', pieceCurrentTurn)
+    return updateGameState(pieceCurrentTurn, pieceCurrentTurn === 'W' ? 'B' : 'W');
 }
 
 function setupChessRandomizerTimer() {
-    let timeRemaining = 16; //In seconds
+    let timeRemaining = 20; //In seconds
 
     // Update the timer every second
     chessTimerInterval = setInterval(() => {

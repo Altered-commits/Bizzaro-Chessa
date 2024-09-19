@@ -1,76 +1,217 @@
 body {
     margin: 0;
     padding: 0;
+
     width: 100%;
     height: 100dvh;
+
     background-image: url('../WallPaper/bizzchess.jpg');
-    background-color: rgb(164, 17, 177);
-    background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
+
     overflow: hidden;
 }
 
-.HomeScreen {
+/*----------SETTINGS AND ABOUT US SCREEN----------*/
+.SettingsScreen, .AboutUsScreen {
+    position: absolute;
+
     width: 100%;
-    height: 100vh; 
+    height: 100%;
+
+    opacity: 0;
+
     display: flex;
-    position: relative;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+
+    background-color: rgba(0, 0, 0, 0.75);
+
+    /*NOTE: Transition set in JavaScript */
+}
+
+.SettingsScreen.active, .AboutUsScreen.active, .HomeScreen.inactive {
+    transform: translateY(-100%);
+    opacity: 1;
+}
+
+.BackButton {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    
+    border: none;
+    background: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+
+    transition: color 0.6s, scale 0.6s;
+}
+
+.BackButton:hover {
+    color: #00FFA3;
+    scale: 130%;
+}
+
+.ScreenTitle {
+    font-size: clamp(40px, 8vw, 100px);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    color: white;
+
+    margin-bottom: 20px;
+}
+
+/* Settings */
+.SettingsSection {
+    width: 50vw;
+}
+
+.RandomizerTimerWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
+    width: 100%;
+
+    color: white;
+    font-size: x-large;
+}
+
+.RandomizerTimerWrapper input[type="text"] {
+    padding: 10px 15px;
+    
+    border: 3px solid #ddd;
+    border-radius: 8px;
+    
+    font-size: 16px;
+    outline: none;
+    
+    transition: border-color 0.3s;
+}
+
+.RandomizerTimerWrapper input[type="text"]:focus {
+    border-color: #007BFF;
+}
+
+.RandomizerTimerWrapper input[type="text"]::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+/* About us */
+.AboutUsSection {
+    font-size: clamp(20px, 3vw, 30px);
+    font-family: 'Times New Roman', Times, serif;
+
+    color: white;
+
+    text-align: center;
+
+    margin: 0 5px;
+}
+
+.SocialLinks {
+    margin-top: 10px;
+}
+
+.SocialLinks a {
+    display: inline-flex;
+    align-items: center;
+    
+    margin: 10px;
+
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+
+    transition: scale 1s, color 1s;
+}
+
+.SocialLinks a i {
+    margin-right: 8px;
+    font-size: 24px;
+}
+
+.SocialLinks a:hover {
+    scale: 130%;
+    color: #00FFA3;
+}
+
+
+/*----------HOME SCREEN----------*/
+.HomeScreen {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    transition: transform 0.8s cubic-bezier(0.5, 0, 0.75, 1);
+}
+
+.Logo img {
+    width: 100%;
+    height: 100%;
 }
 
 .Logo {
-    width: 40dvh;
-    height: 40dvh;
-    background-image: url('../Logo/CHESS.jpg');
-    background-size: cover; 
-    background-position: center; 
-    background-repeat: no-repeat;
+    width: 300px;
+    height: 300px;
     border-radius: 60%; 
     border: 1px solid transparent; 
     box-shadow: 0 0 20px 5px #DC1FFF;
-    transform: translateY(-50%);
+    
     overflow: hidden;
 }
 
 .PageActions {
     margin: 0;
-    position: absolute; 
+    
     text-align: center;
+    
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center; 
-    flex-wrap: wrap;
-    justify-content: space-around; 
-    transform: translateY(65%);
+    
     z-index: 1;
 }
 
 .PageActions button {
-    display: inline-block; 
+    width: 130px;
+
     position: relative;
-    margin: 15px; 
-    padding: 10px 20px; 
+    margin: 10px;
+    padding: 10px 20px;
+    
     font-size: 16px;
     cursor: pointer;
-    border: 2px  solid #DC1FFF;
+    
+    border: 2px solid #DC1FFF;
+    border-radius: 8px;
+    
     background-color: white;
     color: linear-gradient(to left, #00FFA3, #DC1FFF);
-    border-radius: 8px;
+    
     transition: background-color 200ms, color 200ms;
 }
 
 .BottomButtons {
     display: flex;
     justify-content: space-evenly;
+
     position: relative;
-    margin: 15px; 
+
     padding: 10px 20px; 
     font-size: 16px;
+
     cursor: pointer;
-    transform: translateY(70%);
 }    
 
 .PageActions button::before {
@@ -98,4 +239,36 @@ body {
     right: 0px;
     bottom: 0px;
     left: 0px;
+}
+
+/*----------MEDIA QUERIES----------*/
+@media screen and (max-width: 900px) {
+    .SettingsSection {
+        width: 100%;
+    }
+
+    .RandomizerTimerWrapper {
+        justify-content: space-around;
+        font-size: large;
+    }
+
+    .RandomizerTimerWrapper input[type="text"] {
+        width: 119.4px;
+    }
+}
+
+@media screen and (max-width: 438px) {
+    .PageActions button {
+        font-size: small;
+    }
+
+    .BottomButtons {
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .Logo {
+        width: 230px;
+        height: 230px;
+    }
 }

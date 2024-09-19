@@ -1,3 +1,11 @@
+//----------Helper function----------
+function startNewGame() {
+    //New board
+    setupChessBoard();
+    setupDragDropEvents();
+    setupChessRandomizerTimer(); //It is being cleaned in resetDomElements
+}
+
 //----------Buttons----------
 function restartGame() {
     if(confirm("Would you really like to restart the game?")) {
@@ -6,16 +14,13 @@ function restartGame() {
         resetPieceConfig();
         resetPieceStates();
         
-        //New board
-        setupChessBoard();
-        setupDragDropEvents();
-        setupChessRandomizerTimer(); //It is being cleaned in resetDomElements
+        startNewGame();
     }
 }
 
 function quitGame() {
     if(confirm("Would you like to quit?"))
-        window.close();
+        window.location.href = "../Homepage/hpage.html";
 }
 
 function drawGame() {
@@ -25,7 +30,5 @@ function drawGame() {
 
 //----------EVENT LISTENER FOR WINDOW----------
 window.addEventListener('DOMContentLoaded', () => {
-    setupChessBoard();
-    setupDragDropEvents();
-    setupChessRandomizerTimer();
+    startNewGame();
 });

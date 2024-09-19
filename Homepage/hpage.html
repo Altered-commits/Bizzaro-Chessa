@@ -7,20 +7,56 @@
     
     <link rel="stylesheet" href="hpage.css">
     <link rel="icon" href="../Logo/WEB.png" type="image/png">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <script src="hpage.js" defer></script>
 </head>
 <body>
     <div class = "HomeScreen">
-        <div class="Logo"></div>
+        <div class="Logo">
+            <img src="../Logo/WEB.png" alt="BizzaroChessaLogo">
+        </div>
         <div class = "PageActions">
-            <button id = "playButton" onclick="startGame()">PLAY</button>
+            <button onclick="startGame()">PLAY</button>
             <div class = "BottomButtons">
-                <button id = "setButton" onclick="setGame()">SETTINGS</button>
-                <button id = "aboutUs" onclick="aboutUs()">ABOUT US</button>
-                <button id = "Quit" onclick="quitGame()">QUIT</button>
+                <button onclick="settings()">SETTINGS</button>
+                <button onclick="aboutUs()">ABOUT US</button>
+                <button onclick="quitGame()">QUIT</button>
             </div>    
         </div>
-    </div>    
+    </div>
+
+    <div class="SettingsScreen">
+        <div class="ScreenTitle">Settings</div>
+        <div class="SettingsSection">
+            <div class="RandomizerTimerWrapper">
+                Randomizer Duration:
+                <input type="text" id="RandomizerTimer" placeholder="Enter time in seconds">
+            </div>
+        </div>
+        <button class="BackButton" onclick="back()">Back</button>
+    </div>
+
+    <div class="AboutUsScreen">
+        <div class="ScreenTitle">About Us</div>
+        <div class="AboutUsSection">
+            I'm a programmer who likes to create Games, develop on Front-End and much more.<br>
+            I have made games previously using Front-End Stuff.<br>
+            Here are the links to my social media if you want to connect with me:<br>
+            <div class="SocialLinks">
+                <a href="https://www.linkedin.com/in/lalith-pecheti-25966b251/" target="_blank">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://www.instagram.com/__altered_reality__" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://discord.com/users/we-ball" target="_blank">
+                    <i class="fab fa-discord"></i>
+                </a>
+            </div>
+        </div>
+        <button class="BackButton" onclick="back()">Back</button>
+    </div>
 </body>
 
