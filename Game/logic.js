@@ -4,8 +4,13 @@ const chessTurn     = document.querySelector('.ChessTurn');
 const gameEndScreen = document.querySelector('.GameEndScreen');
 const chessTimer    = document.querySelector('.ChessTimer');
 
+//Settings variables (user value || default value)
+let randomizerDuration = (+sessionStorage.getItem("randomizerDuration")) || 60;
+let flipBoard          = (sessionStorage.getItem("flipBoard") === "true");
+let movementSound      = (sessionStorage.getItem("movementSound") === "true");
+
 //Audio
-const pieceMovementAudio = new Audio("../SFX/PieceMovementAudio.mp3");
+const pieceMovementAudio = movementSound ? new Audio("../SFX/PieceMovementAudio.mp3") : null;
 
 //Chess constants
 const CHESS_WIDTH = 8;
@@ -41,6 +46,7 @@ let totalPieces         = CHESS_PIECE_ARRANGEMENT.reduce((acc, row) => {
                                 return acc + row.length;
                             }, 0);
 let chessTimerInterval  = null;
+let isBoardFlipped      = false; //Initial state
 
 //----------Helper functions----------
 function shuffleArray(array) {
@@ -104,7 +110,7 @@ function switchTurnsUpdateGameState() {
 }
 
 function setupChessRandomizerTimer() {
-    let timeRemaining = 20; //In seconds
+    let timeRemaining = randomizerDuration;
 
     // Update the timer every second
     chessTimerInterval = setInterval(() => {
@@ -200,6 +206,31 @@ function switchTurns() {
     else {
         pieceCurrentTurn = 'W';
         chessTurn.innerHTML = `White's Turn`
+    }
+
+    //If the user wants, we flip board
+    if(flipBoard) {
+        isBoardFlipped = !isBoardFlipped;
+        //Flip board
+        chessBoard.style.transform = isBoardFlipped ? "rotate(180deg)" : "rotate(0deg)";
+
+        //Flip pieces
+        const pieces = document.querySelectorAll(".ChessPiece");
+        pieces.forEach(piece => {
+            piece.style.transform = isBoardFlipped ? 'rotate(180deg)' : 'rotate(0deg)';
+        });
+
+        //Flip ranks and files
+        const ranks = document.querySelectorAll(".ChessSquareNumber");
+        const files = document.querySelectorAll(".ChessSquareLetter");
+        ranks.forEach((rank, index) => {
+            rank.style.transform = isBoardFlipped ? 'rotate(180deg)'      : 'rotate(0deg)';
+            rank.innerHTML       = isBoardFlipped ? (CHESS_WIDTH - index) : (index + 1);
+        });
+        files.forEach((file, index) => {
+            file.style.transform = isBoardFlipped ? 'rotate(180deg)' : 'rotate(0deg)';
+            file.innerHTML       = String.fromCharCode((isBoardFlipped ? (CHESS_WIDTH - 1 - index) : index) + 97)
+        });
     }
 }
 
@@ -396,8 +427,8 @@ function showStalemateScreen() {
 }
 
 function afterPieceMovement() {
-    //Play the audio for piece movement
-    pieceMovementAudio.play().catch(error => {
+    //Play the audio for piece movement if user wants movement sound that is
+    pieceMovementAudio?.play().catch(error => {
         console.error("Error playing audio:", error);
     });
 
@@ -566,14 +597,6 @@ function handleDrop(e) {
 
     //Append the piece to the new pieceEndingSquare if valid
     handleValidateCaptureOrMove(pieceStartingSquare, pieceEndingSquare, piece);
-}
-
-function setDragEventsOnly() {
-    const chessPieces  = chessBoard.querySelectorAll('.ChessPiece');
-    chessPieces.forEach((piece) => {
-        piece.setAttribute('draggable', true);
-        piece.addEventListener('dragstart', handleDragStart);
-    });
 }
 
 function setupDragDropEvents() {

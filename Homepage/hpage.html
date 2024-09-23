@@ -7,7 +7,6 @@
     
     <link rel="stylesheet" href="hpage.css">
     <link rel="icon" href="../Logo/WEB.png" type="image/png">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <script src="hpage.js" defer></script>
@@ -30,10 +29,23 @@
     <div class="SettingsScreen">
         <div class="ScreenTitle">Settings</div>
         <div class="SettingsSection">
-            <div class="RandomizerTimerWrapper">
+            
+            <div class="SettingsOption RandomizerDuration">
                 Randomizer Duration:
-                <input type="text" id="RandomizerTimer" placeholder="Enter time in seconds">
+                <input type="text" class="TextBoxElement" placeholder="Enter time in seconds">
             </div>
+
+            <div class="SettingsOption FlipBoard">
+                Flip Board:
+                <input type="checkbox" class="CheckboxElement">
+            </div>
+
+            <div class="SettingsOption MovementSound">
+                Movement Sound:
+                <input type="checkbox" class="CheckboxElement">
+            </div>
+            
+            <button class="SaveButton" onclick="saveSettings()">Save</button>
         </div>
         <button class="BackButton" onclick="back()">Back</button>
     </div>

@@ -8,6 +8,17 @@
     <link rel="stylesheet" href="game.css">
     <link rel="icon" href="../Logo/WEB.png" type="image/png">
 
+    <!-- Check if user has come from homepage or nah ; remove the canPlayGame tag when unloading -->
+    <script>
+        const canUserPlay = sessionStorage.getItem("canPlayGame");
+        if(canUserPlay === null)
+            window.location.href = "../Homepage/hpage.html";
+
+        window.addEventListener('unload', () => {
+            sessionStorage.removeItem("canPlayGame");
+        });
+    </script>
+
     <script src="pieces.js" defer></script>
     <script src="logic.js"  defer></script>
     <script src="game.js"   defer></script>

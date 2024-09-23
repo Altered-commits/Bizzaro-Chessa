@@ -92,6 +92,8 @@ body {
     width: 70vmin;
     height: 70vmin;
 
+    transform-origin: center;
+
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
@@ -127,6 +129,7 @@ body {
 
 .ChessSquareLetter,
 .ChessSquareNumber {
+    font-family: 'Roboto', sans-serif;
     font-size: medium;
     font-weight: 700;
 }
@@ -279,5 +282,12 @@ body {
     }
     .ChessTimer {
         margin: 0;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .ChessSquareLetter,
+    .ChessSquareNumber {
+        font-size: x-small;
     }
 }
