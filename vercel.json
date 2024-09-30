@@ -1,6 +1,6 @@
 {
     "rewrites": [
-      { "source": "/", "destination": "/HomePage/hpage.html" },
+      { "source": "/", "destination": "/Homepage/hpage.html" },
       { "source": "/game", "destination": "/Game/game.html" }
     ]
   }
