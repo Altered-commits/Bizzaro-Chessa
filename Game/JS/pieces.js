@@ -8,7 +8,7 @@ class ChessPiece {
         
         pieceDiv.classList.add("ChessPiece");
         pieceDiv.id        = this.id;
-        pieceDiv.innerHTML = `<img src='ChessPiecesPng/${this.id.slice(0, -1)}.png'>`
+        pieceDiv.innerHTML = `<img src='/Game/ChessPiecesPng/${this.id.slice(0, -1)}.png'>`
 
         return pieceDiv;
     }
