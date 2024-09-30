@@ -13,8 +13,8 @@ body {
     overflow: hidden;
 }
 
-/*----------SETTINGS AND ABOUT US SCREEN----------*/
-.SettingsScreen, .AboutUsScreen {
+/*----------SETTINGS, ABOUT US AND INFO SCREEN----------*/
+.SettingsScreen, .AboutUsScreen, .InfoScreen {
     position: absolute;
 
     width: 100%;
@@ -32,7 +32,7 @@ body {
     /*NOTE: Transition set in JavaScript */
 }
 
-.SettingsScreen.active, .AboutUsScreen.active, .HomeScreen.inactive {
+.SettingsScreen.active, .AboutUsScreen.active, .InfoScreen.active, .HomeScreen.inactive {
     transform: translateY(-100%);
     opacity: 1;
 }
@@ -88,6 +88,7 @@ body {
 
     color: white;
     font-size: x-large;
+    font-family: 'Helvetica', sans-serif;
 }
 
 .TextBoxElement {
@@ -171,13 +172,14 @@ body {
     color: #00FFA3;
 }
 
-/* About us */
-.AboutUsSection {
+/* About us and Info sections */
+.TextSection {
     font-size: clamp(20px, 3vw, 30px);
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Lato', sans-serif;
+
+    line-height: 1.6;
 
     color: white;
-
     text-align: center;
 
     margin: 0 5px;

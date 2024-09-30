@@ -67,7 +67,6 @@ class Pawn extends ChessPiece
     constructor(id) {
         super(id);
         this.startingPawnMovement = true;
-        this.canEnPassantCapture  = false;
     }
 
     validateMovement(startingSquare, endingSquare, pieceColor) {
@@ -162,6 +161,11 @@ class Pawn extends ChessPiece
 
 class Rook extends ChessPiece
 {
+    constructor(id) {
+        super(id);
+        this.hasNotMoved = true;
+    }
+
     validateMovement(startingSquare, endingSquare, _pieceColor) {
         const startId = +startingSquare;
         const endId   = +endingSquare;
@@ -173,9 +177,8 @@ class Rook extends ChessPiece
         const isVertical = (startId % 8 === endId % 8);
         const isHorizontal = (Math.floor(startId / 8) === Math.floor(endId / 8));
         
-        if (!(isVertical || isHorizontal)) {
+        if (!(isVertical || isHorizontal))
             return false; //Rook can only move in straight lines
-        }
 
         //Determine the step direction
         const step = isVertical ? (endId > startId ? 8 : -8) : (endId > startId ? 1 : -1);
@@ -190,6 +193,8 @@ class Rook extends ChessPiece
             currentId += step;
         }
 
+        //It can properly move, set hasNotMoved to false
+        this.hasNotMoved = false;
         return true;
     }
 
@@ -199,6 +204,10 @@ class Rook extends ChessPiece
 
     getPossibleMoves(startingSquare, pieceColor) {
         return this.getPossibleCustomMoves(startingSquare, pieceColor, [-8, 8, -1, 1]);
+    }
+
+    resetState() {
+        this.hasNotMoved = true;
     }
 }
 
@@ -245,6 +254,8 @@ class Bishop extends ChessPiece
     getPossibleMoves(startingSquare, pieceColor) {
         return this.getPossibleCustomMoves(startingSquare, pieceColor, [-9, -7, 7, 9]);
     }
+
+    resetState() {}
 }
 
 class Knight extends ChessPiece
@@ -292,6 +303,8 @@ class Knight extends ChessPiece
             return false;
         });
     }
+
+    resetState() {}
 }
 
 class Queen extends ChessPiece
@@ -361,15 +374,25 @@ class Queen extends ChessPiece
     getPossibleMoves(startingSquare, pieceColor) {
         return this.getPossibleCustomMoves(startingSquare, pieceColor, [-8, 8, -1, 1, -9, -7, 7, 9]);
     }
+
+    resetState() {}
 }
 
 class King extends ChessPiece
 {
-    validateMovement(startingSquare, endingSquare, _pieceColor) {
+    constructor(id) {
+        super(id);
+        this.hasNotMoved = true;
+    }
+
+    validateMovement(startingSquare, endingSquare, pieceColor) {
         const startId = +startingSquare;
-        const endId   = +endingSquare;
-        
-        const step = endId - startId;
+        const endId   = +endingSquare;        
+        const step    = endId - startId;
+
+        //Check for castling conditions
+        if(Math.abs(step) === 2 && this.hasNotMoved)
+            return this.canCastle(startId, step, pieceColor);
 
         //Valid king moves grouped into one big bit list
         const validSteps = 0b1110000010;
@@ -377,8 +400,16 @@ class King extends ChessPiece
 
         if(!isValidMove) return false;
 
-        //Wrap check
-        return this.wrapCheck(startId, endId, 1);
+        //Wrap check so it doesn't wrap around edges
+        const isNotWrapping = this.wrapCheck(startId, endId, 1);
+
+        //Valid move
+        if(isNotWrapping) {
+            this.hasNotMoved = false;
+            return true;
+        }
+
+        return false;
     }
 
     canAttackSquare(startingSquare, endingSquare, pieceColor) {
@@ -414,5 +445,38 @@ class King extends ChessPiece
 
             return (anotherPieceAtPosition.id[0] !== pieceColor);
         });
+    }
+
+    canCastle(startId, step, pieceColor) {
+        const stepTowardsQueen = step === -2;
+        
+        //Either Queen side Rook or King side Rook (either white or black piece)
+        const rook = stepTowardsQueen ? `${pieceColor}R1` : `${pieceColor}R2`;
+
+        //Check if the Rook has moved or not
+        if(!PIECE_CONFIG[rook].hasNotMoved)
+            return false;
+
+        //Check if no pieces exist in between Rook and King
+        const stepSquare  = stepTowardsQueen ? -1 : 1;
+        let   startSquare = startId + stepSquare;
+        const endSquare   = stepTowardsQueen ? (startId - 3) : (startId + 2);
+
+        while(startSquare !== endSquare) {
+            //See if the square is occupied by another piece or nah
+            const piece = document.getElementById(startSquare).querySelector(".ChessPiece");
+            if(piece)
+                return false;
+
+            startSquare += stepSquare;
+        }
+        
+        //We can castle
+        this.hasNotMoved = false;
+        return true;
+    }
+
+    resetState() {
+        this.hasNotMoved = true;
     }
 }

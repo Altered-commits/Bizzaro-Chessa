@@ -1,6 +1,7 @@
 const homeScreen     = document.querySelector('.HomeScreen');
 const aboutUsScreen  = document.querySelector('.AboutUsScreen');
 const settingsScreen = document.querySelector('.SettingsScreen');
+const rulesScreen    = document.querySelector('.InfoScreen');
 
 //Settings options
 const randomizerDurationInput = document.querySelector('.RandomizerDuration input');
@@ -18,7 +19,7 @@ function startGame() {
     window.location.href = "../Game/game.html";
 }
 
-//Settings, About us
+//Settings, About us, Rules buttons
 function aboutUs() {
     homeScreen.classList.add("inactive");
     aboutUsScreen.classList.add("active");
@@ -33,6 +34,13 @@ function settings() {
     settingsScreen.style.transition = enteringTransition;
 }
 
+function info() {
+    homeScreen.classList.add("inactive");
+    rulesScreen.classList.add("active");
+
+    rulesScreen.style.transition = enteringTransition;
+}
+
 //Back button
 function back() {
     //Bring back home screen back to where it belongs
@@ -43,10 +51,13 @@ function back() {
         aboutUsScreen.style.transition = exitingTransition;
         aboutUsScreen.classList.remove("active");
     }
-
-    if(settingsScreen.classList.contains("active")) {
+    else if(settingsScreen.classList.contains("active")) {
         settingsScreen.style.transition = exitingTransition;
         settingsScreen.classList.remove("active");
+    }
+    else if(rulesScreen.classList.contains("active")) {
+        rulesScreen.style.transition = exitingTransition;
+        rulesScreen.classList.remove("active");
     }
 }
 
@@ -57,12 +68,7 @@ function saveSettings() {
     sessionStorage.setItem("flipBoard", flipBoardInput.checked);
     sessionStorage.setItem("movementSound", movementSoundInput.checked);
 
-    alert("Settings saved successfuly");
-}
-
-function quitGame() {
-    if(confirm("Are you sure you want to quit?"))
-        window.close();
+    alert("Settings saved successfully");
 }
 
 //Load settings from session storage

@@ -373,11 +373,52 @@ function isStalemate(pieceColor) {
 }
 
 //----------Piece capturing and moving logic----------
+function isLegalCastlingMove(startSquare, endSquare, pieceColor, opponentColor) {
+    //Imp stuff
+    const startId          = +startSquare.id;
+    const endId            = +endSquare.id;
+    const step             = endId - startId;
+    const stepTowardsQueen = step === -2;
+    
+    const rookStartSquare  = stepTowardsQueen ? document.getElementById(startId - 4) : document.getElementById(startId + 3);
+    const rookEndSquare    = stepTowardsQueen ? document.getElementById(startId - 1) : document.getElementById(startId + 1);
+
+    //Save the original King and Rook pieces
+    const king = startSquare.querySelector(".ChessPiece");
+    const rook = rookStartSquare.querySelector(".ChessPiece");
+
+    //Remove them from their original squares
+    startSquare.removeChild(king);
+    rookStartSquare.removeChild(rook);
+    //And simulate castle
+    endSquare.appendChild(king);
+    rookEndSquare.appendChild(rook);
+
+    //Check for King 'check'
+    const isKingInCheckAfterMove = isKingInCheck(pieceColor, opponentColor);
+
+    //Revert back to original layout
+    rookEndSquare.removeChild(rook);
+    endSquare.removeChild(king);
+    startSquare.appendChild(king);
+    rookStartSquare.appendChild(rook);
+
+    return !isKingInCheckAfterMove;
+}
+
 function isLegalMove(startSquare, endSquare, piece, opponentColor) {
     const pieceColor = piece.id[0];
-    
+    const pieceType  = piece.id[1];
+    const startId    = +startSquare.id;
+    const endId      = +endSquare.id;
+    const step       = endId - startId;
+
+    //King castling
+    if(pieceType === 'K' && Math.abs(step) === 2)
+        return isLegalCastlingMove(startSquare, endSquare, pieceColor, opponentColor);
+
     //Simulate the move
-    const originalEndSquarePiece = endSquare.querySelector('.ChessPiece');
+    const originalEndSquarePiece = endSquare.querySelector(".ChessPiece");
     //Trying to capture the same colored piece
     if(originalEndSquarePiece) {
         if(originalEndSquarePiece.id[0] === pieceColor)
@@ -512,24 +553,38 @@ function promotePawn(pawn, square) {
     square.replaceChild(renderedPiece, pawn);
 }
 
-function checkSpecialMoves(endSquare, piece) {
-    const endSquareId = +endSquare.id;
+function checkSpecialMoves(startSquare, endSquare, piece) {
+    const startId = +startSquare.id;
+    const endId   = +endSquare.id;
 
     const pieceType  = piece.id[1];
     const pieceColor = piece.id[0];
 
-    const endRow  = Math.floor(endSquareId / 8);
-
-    //If it's a pawn, check for two things
-    //1) Pawn promotion
-    //2) En Passant
+    //If it's a pawn, check for Pawn promotion
     //If it's a king, check for castling
 
     switch (pieceType) {
-        case 'P':
+        case 'P': {
+            const endRow  = Math.floor(endId / 8);
             if(endRow === (pieceColor === 'W' ? 0 : 7))
                 promotePawn(piece, endSquare);
-            break;
+        }
+        break;
+        
+        case 'K': {
+            const step             = endId - startId;
+            const stepTowardsQueen = step === -2;
+
+            if(Math.abs(step) === 2) {
+                const rookStartSquare = stepTowardsQueen ? document.getElementById(startId - 4) : document.getElementById(startId + 3);
+                const rookEndSquare   = stepTowardsQueen ? document.getElementById(startId - 1) : document.getElementById(startId + 1);
+                const rook            = rookStartSquare.querySelector(".ChessPiece");
+
+                rookStartSquare.removeChild(rook);
+                rookEndSquare.appendChild(rook);
+            }
+        }
+        break;
     }
 }
 
@@ -548,7 +603,7 @@ function handleValidateCaptureOrMove(startSquare, endSquare, piece) {
     if(!isLegalMove(startSquare, endSquare, piece, opponentColor)) return;
 
     moveOrCapture(endSquare, piece);
-    checkSpecialMoves(endSquare, piece);
+    checkSpecialMoves(startSquare, endSquare, piece);
     afterPieceMovement();
     updateGameState(opponentColor, pieceColor);
 }
@@ -662,9 +717,6 @@ function resetPieceConfig() {
 }
 
 function resetPieceStates() {
-    for (const key in PIECE_CONFIG) {
-        const pieceType = key[1];
-        if(pieceType == 'P')
-            PIECE_CONFIG[key].resetState();
-    }
+    for (const key in PIECE_CONFIG)
+        PIECE_CONFIG[key].resetState();
 }

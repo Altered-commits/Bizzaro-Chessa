@@ -14,7 +14,10 @@
         if(canUserPlay === null)
             window.location.href = "../Homepage/hpage.html";
 
-        window.addEventListener('unload', () => {
+        window.addEventListener("beforeunload", (e) => {
+            e.preventDefault();
+            e.returnValue = '';
+            
             sessionStorage.removeItem("canPlayGame");
         });
     </script>

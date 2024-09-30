@@ -21,7 +21,7 @@
             <div class = "BottomButtons">
                 <button onclick="settings()">SETTINGS</button>
                 <button onclick="aboutUs()">ABOUT US</button>
-                <button onclick="quitGame()">QUIT</button>
+                <button onclick="info()">INFO</button>
             </div>    
         </div>
     </div>
@@ -52,7 +52,7 @@
 
     <div class="AboutUsScreen">
         <div class="ScreenTitle">About Us</div>
-        <div class="AboutUsSection">
+        <div class="TextSection">
             I'm a programmer who likes to create Games, develop on Front-End and much more.<br>
             I have made games previously using Front-End Stuff.<br>
             Here are the links to my social media if you want to connect with me:<br>
@@ -67,6 +67,18 @@
                     <i class="fab fa-discord"></i>
                 </a>
             </div>
+        </div>
+        <button class="BackButton" onclick="back()">Back</button>
+    </div>
+
+    <div class="InfoScreen">
+        <div class="ScreenTitle">Information</div>
+        <div class="TextSection">
+            1. This game is like normal chess, except it randomizes pieces every now and then. <br>
+            2. If you want to add features of your own, feel free to modify `logic.js` file in console. <br>
+            3. More specifically, modify `handleValidateCaptureOrMove` function, it handles piece logic. <br>
+            4. If u want to literally modify piece movement, modify `pieces.js` file. <br>
+            5. Finally, if u have anything to say about this, feel free to tell me. <br>
         </div>
         <button class="BackButton" onclick="back()">Back</button>
     </div>
