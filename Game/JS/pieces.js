@@ -429,7 +429,7 @@ class King extends ChessPiece
             kingSquareId - 7,
         ];
 
-        return kingPossibleMoves.filter((value) => {
+        const filteredMoves = kingPossibleMoves.filter((value) => {
             //Bound checking - 1: king should not go out of the board
             if(value > 63 || value < 0)
                 return false;
@@ -445,9 +445,24 @@ class King extends ChessPiece
 
             return (anotherPieceAtPosition.id[0] !== pieceColor);
         });
+
+        //Castling moves are also allowed at this point
+        if(this.hasNotMoved) {
+            //Queen side castling
+            const queenSideCastle = kingSquareId - 2;
+            const kingSideCastle  = kingSquareId + 2;
+            //King side castling possible
+            if(this.canCastle(kingSquareId, 2, pieceColor, false))
+                filteredMoves.push(kingSideCastle);
+
+            if(this.canCastle(kingSquareId, -2, pieceColor, false))
+                filteredMoves.push(queenSideCastle);
+        }
+
+        return filteredMoves;
     }
 
-    canCastle(startId, step, pieceColor) {
+    canCastle(startId, step, pieceColor, shouldChangeMovedFlag = true) {
         const stepTowardsQueen = step === -2;
         
         //Either Queen side Rook or King side Rook (either white or black piece)
@@ -471,8 +486,11 @@ class King extends ChessPiece
             startSquare += stepSquare;
         }
         
+        //If we want to, we change the hasNotMoved flag (by default we do it)
+        if(shouldChangeMovedFlag)
+            this.hasNotMoved = false;
+        
         //We can castle
-        this.hasNotMoved = false;
         return true;
     }
 
