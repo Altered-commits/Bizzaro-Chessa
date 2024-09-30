@@ -20,7 +20,7 @@ function restartGame() {
 
 function quitGame() {
     if(confirm("Would you like to quit?"))
-        window.location.href = "../Homepage/hpage.html";
+        window.location.href = "/";
 }
 
 function drawGame() {

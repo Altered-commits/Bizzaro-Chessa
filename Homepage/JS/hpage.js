@@ -16,7 +16,7 @@ const exitingTransition  = "transform 0.8s cubic-bezier(0.5, 0, 0.75, 1) 0.5s, o
 function startGame() {
     //Just so user doesn't directly go to game, instead the user has to use homepage to go to game
     sessionStorage.setItem("canPlayGame", "1");
-    window.location.href = "../Game/game.html";
+    window.location.href = "/game";
 }
 
 //Settings, About us, Rules buttons
