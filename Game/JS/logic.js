@@ -654,10 +654,59 @@ function handleDrop(e) {
     handleValidateCaptureOrMove(pieceStartingSquare, pieceEndingSquare, piece);
 }
 
+//Touch event listeners
+function handleTouchStart(e) {
+    e.preventDefault(); //Prevent default touch action like scrolling
+
+    const piece = e.target.parentElement;
+    const pieceId = piece.id;
+    const startSquare = piece.parentElement;
+    const squareId = startSquare.id;
+    const pieceColor = pieceId[0];
+    const opponentColor = pieceColor === 'W' ? 'B' : 'W';
+
+    pieceMovableSquares = PIECE_CONFIG[pieceId].getPossibleMoves(squareId, pieceColor);
+
+    for(const movableSquare of pieceMovableSquares) {
+        const endSquare = document.getElementById(movableSquare);
+        
+        if(isLegalMove(startSquare, endSquare, piece, opponentColor))
+            endSquare.classList.add("ChessSquareHighlightE");
+    }
+
+    pieceStartingSquare = piece.parentElement;
+    e.target.setAttribute('pieceId', pieceId);
+}
+
+function handleTouchMove(e) {
+    //Let's be simple for now
+    e.preventDefault();
+}
+
+function handleTouchEnd(e) {
+    e.preventDefault();
+
+    const pieceId = e.target.getAttribute('pieceId');
+    const piece = document.getElementById(pieceId);
+
+    //Remove highlights
+    for(const movableSquare of pieceMovableSquares)
+        document.getElementById(movableSquare).classList.remove("ChessSquareHighlightE");
+
+    //Get the square where the touch ended
+    const touch = e.changedTouches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+    const pieceEndingSquare = element.closest('.ChessSquare');
+
+    if(pieceEndingSquare)
+        handleValidateCaptureOrMove(pieceStartingSquare, pieceEndingSquare, piece);
+}
+
 function setupDragDropEvents() {
     const chessPieces  = chessBoard.querySelectorAll('.ChessPiece');
     const chessSquares = chessBoard.querySelectorAll('.ChessSquare');
 
+    //Drag Events
     chessPieces.forEach((piece) => {
         piece.setAttribute('draggable', true);
         piece.addEventListener('dragstart', handleDragStart);
@@ -666,6 +715,17 @@ function setupDragDropEvents() {
     chessSquares.forEach((pieceEndingSquare) => {
         pieceEndingSquare.addEventListener('dragover', handleDragOver);
         pieceEndingSquare.addEventListener('drop', handleDrop);
+    });
+}
+
+function setupTouchEvents() {
+    const chessPieces = chessBoard.querySelectorAll('.ChessPiece');
+
+    //Touch events
+    chessPieces.forEach((piece) => {
+        piece.addEventListener('touchstart', handleTouchStart);
+        piece.addEventListener('touchmove', handleTouchMove);
+        piece.addEventListener('touchend', handleTouchEnd);
     });
 }
 
@@ -681,6 +741,16 @@ function cleanupDragDropEvents() {
     chessSquares.forEach((square) => {
         square.removeEventListener('dragover', handleDragOver);
         square.removeEventListener('drop', handleDrop);
+    });
+}
+
+function cleanupTouchEvents() {
+    const chessPieces = chessBoard.querySelectorAll('.ChessPiece');
+
+    chessPieces.forEach((piece) => {
+        piece.removeEventListener('touchstart', handleTouchStart);
+        piece.removeEventListener('touchmove', handleTouchMove);
+        piece.removeEventListener('touchend', handleTouchEnd);
     });
 }
 

@@ -1,7 +1,20 @@
 //----------Helper function----------
+//ChatGPT copied
+function isTouchDevice() {
+    return (
+        'ontouchstart' in window || // Checks for touch event support in most browsers
+        navigator.maxTouchPoints > 0 || // Modern touch-enabled devices
+        window.matchMedia("(pointer: coarse)").matches // Detects coarse input, typical of touchscreens
+    );
+}
+
 function startNewGame() {
     //New board
     setupChessBoard();
+    
+    if(isTouchDevice())
+        setupTouchEvents();
+
     setupDragDropEvents();
     setupChessRandomizerTimer(); //It is being cleaned in resetDomElements
 }
@@ -9,6 +22,9 @@ function startNewGame() {
 //----------Buttons----------
 function restartGame() {
     if(confirm("Would you really like to restart the game?")) {
+        if(isTouchDevice())
+            cleanupTouchEvents();
+
         cleanupDragDropEvents();
         resetDomElements();
         resetPieceConfig();

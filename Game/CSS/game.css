@@ -286,6 +286,13 @@ body {
 }
 
 @media screen and (max-width: 450px) {
+    .ChessBoard {
+        width: 98vmin;
+        height: 98vmin;
+
+        border-width: 5px;
+    }
+
     .ChessSquareLetter,
     .ChessSquareNumber {
         font-size: x-small;
