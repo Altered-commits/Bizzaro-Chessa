@@ -5,7 +5,7 @@
 - King check highlighting
 - Checkmate and Stalemate detection
 - Pawn Promotion
+- King Castlings
 ### The twist: Piece place randomization. Every few seconds / minutes (time set by the user), the pieces are randomized
 ## Things to add in future:
 - En passant
-- King castling

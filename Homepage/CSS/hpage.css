@@ -232,7 +232,7 @@ body {
 }
 
 .Logo {
-    width: 40vw;
+    width: 50vw;
     height: auto;
     max-width: 300px;
     max-height: 300px;
@@ -331,6 +331,11 @@ body {
 }
 
 @media screen and (max-width: 438px) {
+    .BackButton {
+        top: 10px;
+        left: 0;
+    }
+
     .PageActions button {
         font-size: small;
     }
